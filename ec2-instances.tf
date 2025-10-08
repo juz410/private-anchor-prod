@@ -81,7 +81,7 @@ EOF
 locals {
   prometheus_grafana_loki_servers = {
     prometheus_grafana_loki_server_01 = {
-      name_suffix        = "prometheus-grafana-loki-server-01"
+      name_suffix        = "grafana-01"
       ami                = data.aws_ami.amazon_linux.id
       instance_type      = "c7i.xlarge"
       subnet_id          = module.vpc.private_kalsym_app_subnet_a_id
@@ -113,7 +113,7 @@ locals {
     }
 
     prometheus_grafana_loki_server_02 = {
-      name_suffix        = "prometheus-grafana-loki-server-02"
+      name_suffix        = "grafana-02"
       ami                = data.aws_ami.amazon_linux.id
       instance_type      = "c7i.xlarge"
       subnet_id          = module.vpc.private_kalsym_app_subnet_b_id
@@ -145,7 +145,7 @@ locals {
 
   ussd_servers = {
     ussd_server_01 = {
-      name_suffix        = "ussd-server-01"
+      name_suffix        = "ussd-svr-01"
       ami                = data.aws_ami.amazon_linux.id
       instance_type      = "c7i.xlarge"
       subnet_id          = module.vpc.private_kalsym_app_subnet_a_id
@@ -176,7 +176,7 @@ locals {
     }
 
     ussd_server_02 = {
-      name_suffix        = "ussd-server-02"
+      name_suffix        = "ussd-svr-02"
       ami                = data.aws_ami.amazon_linux.id
       instance_type      = "c7i.xlarge"
       subnet_id          = module.vpc.private_kalsym_app_subnet_b_id
@@ -208,7 +208,7 @@ locals {
 
   mcn_ivr_servers = {
     mcn_ivr_server_01 = {
-      name_suffix        = "mcn-ivr-server-01"
+      name_suffix        = "mcn-ivr-svr-01"
       ami                = data.aws_ami.amazon_linux.id
       instance_type      = "c7i.2xlarge"
       subnet_id          = module.vpc.private_kalsym_app_subnet_a_id
@@ -239,7 +239,7 @@ locals {
     }
 
     mcn_ivr_server_02 = {
-      name_suffix        = "mcn-ivr-server-02"
+      name_suffix        = "mcn-ivr-svr-02"
       ami                = data.aws_ami.amazon_linux.id
       instance_type      = "c7i.2xlarge"
       subnet_id          = module.vpc.private_kalsym_app_subnet_b_id
@@ -334,7 +334,7 @@ locals {
 
   iot_web_frontend_servers = {
     iot_web_frontend_server_01 = {
-      name_suffix        = "iot-web-frontend-server-01"
+      name_suffix        = "iot-frontend-01"
       ami                = data.aws_ami.amazon_linux.id
       instance_type      = "c7i.large"
       subnet_id          = module.vpc.private_multibyte_subnet_a_id
@@ -366,7 +366,7 @@ locals {
     }
 
     iot_web_frontend_server_02 = {
-      name_suffix        = "iot-web-frontend-server-02"
+      name_suffix        = "iot-frontend-02"
       ami                = data.aws_ami.amazon_linux.id
       instance_type      = "c7i.large"
       subnet_id          = module.vpc.private_multibyte_subnet_a_id
@@ -398,7 +398,7 @@ locals {
 
   iot_web_backend_servers = {
     iot_web_backend_server_01 = {
-      name_suffix        = "iot-web-backend-server-01"
+      name_suffix        = "iot-backend-01"
       ami                = data.aws_ami.amazon_linux.id
       instance_type      = "m7i.large"
       subnet_id          = module.vpc.private_multibyte_subnet_a_id
@@ -429,7 +429,7 @@ locals {
     }
 
     iot_web_backend_server_02 = {
-      name_suffix        = "iot-web-backend-server-02"
+      name_suffix        = "iot-backend-02"
       ami                = data.aws_ami.amazon_linux.id
       instance_type      = "m7i.large"
       subnet_id          = module.vpc.private_multibyte_subnet_a_id
@@ -461,7 +461,7 @@ locals {
 
   middleware_api_servers = {
     middleware_api_server_01 = {
-      name_suffix        = "middleware-api-server-01"
+      name_suffix        = "api-srv-01"
       ami                = data.aws_ami.amazon_linux.id
       instance_type      = "c7i.large"
       subnet_id          = module.vpc.private_multibyte_subnet_a_id
@@ -492,7 +492,7 @@ locals {
     }
 
     middleware_api_server_02 = {
-      name_suffix        = "middleware-api-server-02"
+      name_suffix        = "api-srv-02"
       ami                = data.aws_ami.amazon_linux.id
       instance_type      = "c7i.large"
       subnet_id          = module.vpc.private_multibyte_subnet_a_id
@@ -524,7 +524,7 @@ locals {
 
   dra_servers = {
     dra_server_01 = {
-      name_suffix        = "dra-server-01"
+      name_suffix        = "dra-svr-01"
       ami                = data.aws_ami.amazon_linux.id
       instance_type      = "c7i.large"
       subnet_id          = module.vpc.private_multibyte_subnet_a_id
@@ -543,7 +543,7 @@ locals {
     }
 
     dra_server_02 = {
-      name_suffix        = "dra-server-02"
+      name_suffix        = "dra-svr-02"
       ami                = data.aws_ami.amazon_linux.id
       instance_type      = "c7i.large"
       subnet_id          = module.vpc.private_multibyte_subnet_a_id
@@ -563,7 +563,7 @@ locals {
 
   smsc_servers = {
     smsc_server_01 = {
-      name_suffix        = "smsc-server-01"
+      name_suffix        = "smsc-srv-01"
       ami                = data.aws_ami.amazon_linux.id
       instance_type      = "c7i.xlarge"
       subnet_id          = module.vpc.private_multibyte_subnet_a_id
@@ -594,7 +594,7 @@ locals {
     }
 
     smsc_server_02 = {
-      name_suffix        = "smsc-server-02"
+      name_suffix        = "smsc-srv-02"
       ami                = data.aws_ami.amazon_linux.id
       instance_type      = "c7i.xlarge"
       subnet_id          = module.vpc.private_multibyte_subnet_a_id
@@ -626,7 +626,7 @@ locals {
 
   scp_servers = {
     scp_server_01 = {
-      name_suffix        = "scp-server-01"
+      name_suffix        = "scp-srv-01"
       ami                = data.aws_ami.amazon_linux.id
       instance_type      = "c7i.xlarge"
       subnet_id          = module.vpc.private_multibyte_subnet_a_id
@@ -657,7 +657,7 @@ locals {
     }
 
     scp_server_02 = {
-      name_suffix        = "scp-server-02"
+      name_suffix        = "scp-srv-02"
       ami                = data.aws_ami.amazon_linux.id
       instance_type      = "c7i.xlarge"
       subnet_id          = module.vpc.private_multibyte_subnet_a_id
@@ -689,7 +689,7 @@ locals {
 
   ocs_servers = {
     ocs_server_01 = {
-      name_suffix        = "ocs-server-01"
+      name_suffix        = "ocs-srv-01"
       ami                = data.aws_ami.amazon_linux.id
       instance_type      = "c7i.xlarge"
       subnet_id          = module.vpc.private_multibyte_subnet_a_id
@@ -720,7 +720,7 @@ locals {
     }
 
     ocs_server_02 = {
-      name_suffix        = "ocs-server-02"
+      name_suffix        = "ocs-srv-02"
       ami                = data.aws_ami.amazon_linux.id
       instance_type      = "c7i.xlarge"
       subnet_id          = module.vpc.private_multibyte_subnet_a_id
