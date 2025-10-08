@@ -80,15 +80,15 @@ EOF
 
 locals {
   prometheus_grafana_loki_servers = {
-    prometheus_grafana_loki_server_a1 = {
-      name_suffix        = "prometheus-grafana-loki-server-a1"
+    prometheus_grafana_loki_server_01 = {
+      name_suffix        = "prometheus-grafana-loki-server-01"
       ami                = data.aws_ami.amazon_linux.id
       instance_type      = "c7i.xlarge"
       subnet_id          = module.vpc.private_kalsym_app_subnet_a_id
       security_group_ids = [module.security_groups.prometheus_grafana_loki_server_sg_id]
 
-      root_volume_size       = 100
-      root_volume_iops       = 3000
+      root_volume_size = 100
+      root_volume_iops = 3000
 
       ebs_block_devices = [
         {
@@ -103,23 +103,23 @@ locals {
       ]
 
       backup_8hourly  = false
-      backup_12hourly  = false
-      backup_daily   = false
-      backup_weekly  = false
-      backup_monthly = false
-      backup_yearly = false
-      user_data          = "${local.base_userdata}\n${local.ebs_userdata}"
+      backup_12hourly = false
+      backup_daily    = false
+      backup_weekly   = false
+      backup_monthly  = false
+      backup_yearly   = false
+      user_data       = "${local.base_userdata}\n${local.ebs_userdata}"
 
     }
 
-    prometheus_grafana_loki_server_b1 = {
-      name_suffix        = "prometheus-grafana-loki-server-b1"
+    prometheus_grafana_loki_server_02 = {
+      name_suffix        = "prometheus-grafana-loki-server-02"
       ami                = data.aws_ami.amazon_linux.id
       instance_type      = "c7i.xlarge"
       subnet_id          = module.vpc.private_kalsym_app_subnet_b_id
       security_group_ids = [module.security_groups.prometheus_grafana_loki_server_sg_id]
-      uroot_volume_size       = 100
-      root_volume_iops       = 3000
+      uroot_volume_size  = 100
+      root_volume_iops   = 3000
 
       ebs_block_devices = [
         {
@@ -134,24 +134,24 @@ locals {
       ]
 
       backup_8hourly  = false
-      backup_12hourly  = false
-      backup_daily   = false
-      backup_weekly  = false
-      backup_monthly = false
-      backup_yearly = false
-      user_data          = "${local.base_userdata}\n${local.ebs_userdata}"
+      backup_12hourly = false
+      backup_daily    = false
+      backup_weekly   = false
+      backup_monthly  = false
+      backup_yearly   = false
+      user_data       = "${local.base_userdata}\n${local.ebs_userdata}"
     }
   }
 
   ussd_servers = {
-    ussd_server_a1 = {
-      name_suffix        = "ussd-server-a1"
+    ussd_server_01 = {
+      name_suffix        = "ussd-server-01"
       ami                = data.aws_ami.amazon_linux.id
       instance_type      = "c7i.xlarge"
       subnet_id          = module.vpc.private_kalsym_app_subnet_a_id
       security_group_ids = [module.security_groups.ussd_server_sg_id]
-      root_volume_size       = 80
-      root_volume_iops       = 3000
+      root_volume_size   = 80
+      root_volume_iops   = 3000
 
       ebs_block_devices = [
         {
@@ -166,23 +166,23 @@ locals {
       ]
 
       backup_8hourly  = false
-      backup_12hourly  = false
-      backup_daily   = false
-      backup_weekly  = false
-      backup_monthly = false
-      backup_yearly = false
-      user_data          = "${local.base_userdata}\n${local.ebs_userdata}"
+      backup_12hourly = false
+      backup_daily    = false
+      backup_weekly   = false
+      backup_monthly  = false
+      backup_yearly   = false
+      user_data       = "${local.base_userdata}\n${local.ebs_userdata}"
 
     }
 
-    ussd_server_b1 = {
-      name_suffix        = "ussd-server-b1"
+    ussd_server_02 = {
+      name_suffix        = "ussd-server-02"
       ami                = data.aws_ami.amazon_linux.id
       instance_type      = "c7i.xlarge"
       subnet_id          = module.vpc.private_kalsym_app_subnet_b_id
       security_group_ids = [module.security_groups.ussd_server_sg_id]
-      root_volume_size       = 80
-      root_volume_iops       = 3000
+      root_volume_size   = 80
+      root_volume_iops   = 3000
 
       ebs_block_devices = [
         {
@@ -197,24 +197,24 @@ locals {
       ]
 
       backup_8hourly  = false
-      backup_12hourly  = false
-      backup_daily   = false
-      backup_weekly  = false
-      backup_monthly = false
-      backup_yearly = false
-      user_data          = "${local.base_userdata}\n${local.ebs_userdata}"
+      backup_12hourly = false
+      backup_daily    = false
+      backup_weekly   = false
+      backup_monthly  = false
+      backup_yearly   = false
+      user_data       = "${local.base_userdata}\n${local.ebs_userdata}"
     }
   }
 
   mcn_ivr_servers = {
-    mcn_ivr_server_a1 = {
-      name_suffix        = "mcn-ivr-server-a1"
+    mcn_ivr_server_01 = {
+      name_suffix        = "mcn-ivr-server-01"
       ami                = data.aws_ami.amazon_linux.id
       instance_type      = "c7i.2xlarge"
       subnet_id          = module.vpc.private_kalsym_app_subnet_a_id
       security_group_ids = [module.security_groups.mcn_ivr_server_sg_id]
-      root_volume_size       = 80
-      root_volume_iops       = 3000
+      root_volume_size   = 80
+      root_volume_iops   = 3000
 
       ebs_block_devices = [
         {
@@ -229,23 +229,23 @@ locals {
       ]
 
       backup_8hourly  = false
-      backup_12hourly  = false
-      backup_daily   = false
-      backup_weekly  = false
-      backup_monthly = false
-      backup_yearly = false
-      user_data          = "${local.base_userdata}\n${local.ebs_userdata}"
+      backup_12hourly = false
+      backup_daily    = false
+      backup_weekly   = false
+      backup_monthly  = false
+      backup_yearly   = false
+      user_data       = "${local.base_userdata}\n${local.ebs_userdata}"
 
     }
 
-    mcn_ivr_server_b1 = {
-      name_suffix        = "mcn-ivr-server-b1"
+    mcn_ivr_server_02 = {
+      name_suffix        = "mcn-ivr-server-02"
       ami                = data.aws_ami.amazon_linux.id
       instance_type      = "c7i.2xlarge"
       subnet_id          = module.vpc.private_kalsym_app_subnet_b_id
       security_group_ids = [module.security_groups.mcn_ivr_server_sg_id]
-      root_volume_size       = 80
-      root_volume_iops       = 3000
+      root_volume_size   = 80
+      root_volume_iops   = 3000
 
       ebs_block_devices = [
         {
@@ -260,88 +260,88 @@ locals {
       ]
 
       backup_8hourly  = false
-      backup_12hourly  = false
-      backup_daily   = false
-      backup_weekly  = false
-      backup_monthly = false
-      backup_yearly = false
-      user_data          = "${local.base_userdata}\n${local.ebs_userdata}"
+      backup_12hourly = false
+      backup_daily    = false
+      backup_weekly   = false
+      backup_monthly  = false
+      backup_yearly   = false
+      user_data       = "${local.base_userdata}\n${local.ebs_userdata}"
     }
   }
 
-  kalsym_mysql_db_servers = {
-    kalsym_mysql_db_server_a1 = {
-      name_suffix        = "kalsym-mysql-db-server-a1"
-      ami                = data.aws_ami.amazon_linux.id
-      instance_type      = "c7i.large"
-      subnet_id          = module.vpc.private_kalsym_db_subnet_a_id
-      security_group_ids = [module.security_groups.kalsym_mysql_db_server_sg_id]
-      root_volume_size       = 100
-      root_volume_iops       = 3000
+  # kalsym_mysql_db_servers = {
+  #   kalsym_mysql_db_server_01 = {
+  #     name_suffix        = "kalsym-mysql-db-server-01"
+  #     ami                = data.aws_ami.amazon_linux.id
+  #     instance_type      = "c7i.large"
+  #     subnet_id          = module.vpc.private_kalsym_db_subnet_a_id
+  #     security_group_ids = [module.security_groups.kalsym_mysql_db_server_sg_id]
+  #     root_volume_size   = 100
+  #     root_volume_iops   = 3000
 
-      ebs_block_devices = [
-        {
-          device_name           = "/dev/xvdb"
-          volume_size           = 200
-          volume_type           = "gp3"
-          iops                  = 3000
-          throughput            = 125
-          encrypted             = true
-          delete_on_termination = true
-        }
-      ]
+  #     ebs_block_devices = [
+  #       {
+  #         device_name           = "/dev/xvdb"
+  #         volume_size           = 200
+  #         volume_type           = "gp3"
+  #         iops                  = 3000
+  #         throughput            = 125
+  #         encrypted             = true
+  #         delete_on_termination = true
+  #       }
+  #     ]
 
-      backup_8hourly  = false
-      backup_12hourly  = false
-      backup_daily   = false
-      backup_weekly  = false
-      backup_monthly = false
-      backup_yearly = false
-      user_data          = "${local.base_userdata}\n${local.ebs_userdata}"
+  #     backup_8hourly  = false
+  #     backup_12hourly = false
+  #     backup_daily    = false
+  #     backup_weekly   = false
+  #     backup_monthly  = false
+  #     backup_yearly   = false
+  #     user_data       = "${local.base_userdata}\n${local.ebs_userdata}"
 
-    }
+  #   }
 
-    kalsym_mysql_db_server_b1 = {
-      name_suffix        = "kalsym-mysql-db-server-b1"
-      ami                = data.aws_ami.amazon_linux.id
-      instance_type      = "c7i.large"
-      subnet_id          = module.vpc.private_kalsym_db_subnet_b_id
-      security_group_ids = [module.security_groups.kalsym_mysql_db_server_sg_id]
-      root_volume_size       = 100
-      root_volume_iops       = 3000
+  #   kalsym_mysql_db_server_02 = {
+  #     name_suffix        = "kalsym-mysql-db-server-02"
+  #     ami                = data.aws_ami.amazon_linux.id
+  #     instance_type      = "c7i.large"
+  #     subnet_id          = module.vpc.private_kalsym_db_subnet_b_id
+  #     security_group_ids = [module.security_groups.kalsym_mysql_db_server_sg_id]
+  #     root_volume_size   = 100
+  #     root_volume_iops   = 3000
 
-      ebs_block_devices = [
-        {
-          device_name           = "/dev/xvdb"
-          volume_size           = 200
-          volume_type           = "gp3"
-          iops                  = 3000
-          throughput            = 125
-          encrypted             = true
-          delete_on_termination = true
-        }
-      ]
+  #     ebs_block_devices = [
+  #       {
+  #         device_name           = "/dev/xvdb"
+  #         volume_size           = 200
+  #         volume_type           = "gp3"
+  #         iops                  = 3000
+  #         throughput            = 125
+  #         encrypted             = true
+  #         delete_on_termination = true
+  #       }
+  #     ]
 
-      backup_8hourly  = false
-      backup_12hourly  = false
-      backup_daily   = false
-      backup_weekly  = false
-      backup_monthly = false
-      backup_yearly = false
-      user_data          = "${local.base_userdata}\n${local.ebs_userdata}"
-    }
-  }
+  #     backup_8hourly  = false
+  #     backup_12hourly = false
+  #     backup_daily    = false
+  #     backup_weekly   = false
+  #     backup_monthly  = false
+  #     backup_yearly   = false
+  #     user_data       = "${local.base_userdata}\n${local.ebs_userdata}"
+  #   }
+  # }
 
   iot_web_frontend_servers = {
-    iot_web_frontend_server_a1 = {
-      name_suffix        = "iot-web-frontend-server-a1"
+    iot_web_frontend_server_01 = {
+      name_suffix        = "iot-web-frontend-server-01"
       ami                = data.aws_ami.amazon_linux.id
       instance_type      = "c7i.large"
       subnet_id          = module.vpc.private_multibyte_subnet_a_id
       security_group_ids = [module.security_groups.iot_web_frontend_server_sg_id]
 
-      root_volume_size       = 80
-      root_volume_iops       = 3000
+      root_volume_size = 80
+      root_volume_iops = 3000
 
       ebs_block_devices = [
         {
@@ -356,23 +356,23 @@ locals {
       ]
 
       backup_8hourly  = false
-      backup_12hourly  = false
-      backup_daily   = false
-      backup_weekly  = false
-      backup_monthly = false
-      backup_yearly = false
-      user_data          = "${local.base_userdata}\n${local.ebs_userdata}"
+      backup_12hourly = false
+      backup_daily    = false
+      backup_weekly   = false
+      backup_monthly  = false
+      backup_yearly   = false
+      user_data       = "${local.base_userdata}\n${local.ebs_userdata}"
 
     }
 
-    iot_web_frontend_server_b1 = {
-      name_suffix        = "iot-web-frontend-server-b1"
+    iot_web_frontend_server_02 = {
+      name_suffix        = "iot-web-frontend-server-02"
       ami                = data.aws_ami.amazon_linux.id
       instance_type      = "c7i.large"
       subnet_id          = module.vpc.private_multibyte_subnet_a_id
       security_group_ids = [module.security_groups.iot_web_frontend_server_sg_id]
-      root_volume_size       = 80
-      root_volume_iops       = 3000
+      root_volume_size   = 80
+      root_volume_iops   = 3000
 
       ebs_block_devices = [
         {
@@ -387,24 +387,24 @@ locals {
       ]
 
       backup_8hourly  = false
-      backup_12hourly  = false
-      backup_daily   = false
-      backup_weekly  = false
-      backup_monthly = false
-      backup_yearly = false
-      user_data          = "${local.base_userdata}\n${local.ebs_userdata}"
+      backup_12hourly = false
+      backup_daily    = false
+      backup_weekly   = false
+      backup_monthly  = false
+      backup_yearly   = false
+      user_data       = "${local.base_userdata}\n${local.ebs_userdata}"
     }
   }
 
   iot_web_backend_servers = {
-    iot_web_backend_server_a1 = {
-      name_suffix        = "iot-web-backend-server-a1"
+    iot_web_backend_server_01 = {
+      name_suffix        = "iot-web-backend-server-01"
       ami                = data.aws_ami.amazon_linux.id
-      instance_type      = "c7i.xlarge"
+      instance_type      = "m7i.large"
       subnet_id          = module.vpc.private_multibyte_subnet_a_id
       security_group_ids = [module.security_groups.iot_web_backend_server_sg_id]
-      root_volume_size       = 100
-      root_volume_iops       = 3000
+      root_volume_size   = 100
+      root_volume_iops   = 3000
 
       ebs_block_devices = [
         {
@@ -419,23 +419,23 @@ locals {
       ]
 
       backup_8hourly  = false
-      backup_12hourly  = false
-      backup_daily   = false
-      backup_weekly  = false
-      backup_monthly = false
-      backup_yearly = false
-      user_data          = "${local.base_userdata}\n${local.ebs_userdata}"
+      backup_12hourly = false
+      backup_daily    = false
+      backup_weekly   = false
+      backup_monthly  = false
+      backup_yearly   = false
+      user_data       = "${local.base_userdata}\n${local.ebs_userdata}"
 
     }
 
-    iot_web_backend_server_b1 = {
-      name_suffix        = "iot-web-backend-server-b1"
+    iot_web_backend_server_02 = {
+      name_suffix        = "iot-web-backend-server-02"
       ami                = data.aws_ami.amazon_linux.id
-      instance_type      = "c7i.xlarge"
+      instance_type      = "m7i.large"
       subnet_id          = module.vpc.private_multibyte_subnet_a_id
       security_group_ids = [module.security_groups.iot_web_backend_server_sg_id]
-      root_volume_size       = 100
-      root_volume_iops       = 3000
+      root_volume_size   = 100
+      root_volume_iops   = 3000
 
       ebs_block_devices = [
         {
@@ -450,63 +450,126 @@ locals {
       ]
 
       backup_8hourly  = false
-      backup_12hourly  = false
-      backup_daily   = false
-      backup_weekly  = false
-      backup_monthly = false
-      backup_yearly = false
-      user_data          = "${local.base_userdata}\n${local.ebs_userdata}"
+      backup_12hourly = false
+      backup_daily    = false
+      backup_weekly   = false
+      backup_monthly  = false
+      backup_yearly   = false
+      user_data       = "${local.base_userdata}\n${local.ebs_userdata}"
+    }
+  }
+
+  middleware_api_servers = {
+    middleware_api_server_01 = {
+      name_suffix        = "middleware-api-server-01"
+      ami                = data.aws_ami.amazon_linux.id
+      instance_type      = "c7i.large"
+      subnet_id          = module.vpc.private_multibyte_subnet_a_id
+      security_group_ids = [module.security_groups.middleware_api_server_sg_id]
+      root_volume_size   = 80
+      root_volume_iops   = 3000
+
+      ebs_block_devices = [
+        {
+          device_name           = "/dev/xvdb"
+          volume_size           = 80
+          volume_type           = "gp3"
+          iops                  = 3000
+          throughput            = 125
+          encrypted             = true
+          delete_on_termination = true
+        }
+      ]
+
+      backup_8hourly  = false
+      backup_12hourly = false
+      backup_daily    = false
+      backup_weekly   = false
+      backup_monthly  = false
+      backup_yearly   = false
+      user_data       = "${local.base_userdata}\n${local.ebs_userdata}"
+
+    }
+
+    middleware_api_server_02 = {
+      name_suffix        = "middleware-api-server-02"
+      ami                = data.aws_ami.amazon_linux.id
+      instance_type      = "c7i.large"
+      subnet_id          = module.vpc.private_multibyte_subnet_a_id
+      security_group_ids = [module.security_groups.middleware_api_server_sg_id]
+      root_volume_size   = 80
+      root_volume_iops   = 3000
+
+      ebs_block_devices = [
+        {
+          device_name           = "/dev/xvdb"
+          volume_size           = 80
+          volume_type           = "gp3"
+          iops                  = 3000
+          throughput            = 125
+          encrypted             = true
+          delete_on_termination = true
+        }
+      ]
+
+      backup_8hourly  = false
+      backup_12hourly = false
+      backup_daily    = false
+      backup_weekly   = false
+      backup_monthly  = false
+      backup_yearly   = false
+      user_data       = "${local.base_userdata}\n${local.ebs_userdata}"
     }
   }
 
   dra_servers = {
-    dra_server_a1 = {
-      name_suffix        = "dra-server-a1"
+    dra_server_01 = {
+      name_suffix        = "dra-server-01"
       ami                = data.aws_ami.amazon_linux.id
       instance_type      = "c7i.large"
       subnet_id          = module.vpc.private_multibyte_subnet_a_id
       security_group_ids = [module.security_groups.dra_server_sg_id]
-      root_volume_size       = 50
-      root_volume_iops       = 3000
+      root_volume_size   = 50
+      root_volume_iops   = 3000
 
       backup_8hourly  = false
-      backup_12hourly  = false
-      backup_daily   = false
-      backup_weekly  = false
-      backup_monthly = false
-      backup_yearly = false
-      user_data          = "${local.base_userdata}"
+      backup_12hourly = false
+      backup_daily    = false
+      backup_weekly   = false
+      backup_monthly  = false
+      backup_yearly   = false
+      user_data       = "${local.base_userdata}"
 
     }
 
-    dra_server_b1 = {
-      name_suffix        = "dra-server-b1"
+    dra_server_02 = {
+      name_suffix        = "dra-server-02"
       ami                = data.aws_ami.amazon_linux.id
       instance_type      = "c7i.large"
       subnet_id          = module.vpc.private_multibyte_subnet_a_id
       security_group_ids = [module.security_groups.dra_server_sg_id]
-      root_volume_size       = 50
-      root_volume_iops       = 3000
+      root_volume_size   = 50
+      root_volume_iops   = 3000
 
       backup_8hourly  = false
-      backup_12hourly  = false
-      backup_daily   = false
-      backup_weekly  = false
-      backup_monthly = false
-      backup_yearly = false
-      user_data          = "${local.base_userdata}"
+      backup_12hourly = false
+      backup_daily    = false
+      backup_weekly   = false
+      backup_monthly  = false
+      backup_yearly   = false
+      user_data       = "${local.base_userdata}"
     }
   }
 
   smsc_servers = {
-    smsc_server_a1 = {
-      name_suffix        = "smsc-server-a1"
+    smsc_server_01 = {
+      name_suffix        = "smsc-server-01"
       ami                = data.aws_ami.amazon_linux.id
       instance_type      = "c7i.xlarge"
       subnet_id          = module.vpc.private_multibyte_subnet_a_id
       security_group_ids = [module.security_groups.smsc_server_sg_id]
-      root_volume_size       = 100
-      root_volume_iops       = 3000
+      root_volume_size   = 100
+      root_volume_iops   = 3000
 
       ebs_block_devices = [
         {
@@ -521,23 +584,23 @@ locals {
       ]
 
       backup_8hourly  = false
-      backup_12hourly  = false
-      backup_daily   = false
-      backup_weekly  = false
-      backup_monthly = false
-      backup_yearly = false
-      user_data          = "${local.base_userdata}\n${local.ebs_userdata}"
+      backup_12hourly = false
+      backup_daily    = false
+      backup_weekly   = false
+      backup_monthly  = false
+      backup_yearly   = false
+      user_data       = "${local.base_userdata}\n${local.ebs_userdata}"
 
     }
 
-    smsc_server_b1 = {
-      name_suffix        = "smsc-server-b1"
+    smsc_server_02 = {
+      name_suffix        = "smsc-server-02"
       ami                = data.aws_ami.amazon_linux.id
       instance_type      = "c7i.xlarge"
       subnet_id          = module.vpc.private_multibyte_subnet_a_id
       security_group_ids = [module.security_groups.smsc_server_sg_id]
-      root_volume_size       = 100
-      root_volume_iops       = 3000
+      root_volume_size   = 100
+      root_volume_iops   = 3000
 
       ebs_block_devices = [
         {
@@ -552,24 +615,24 @@ locals {
       ]
 
       backup_8hourly  = false
-      backup_12hourly  = false
-      backup_daily   = false
-      backup_weekly  = false
-      backup_monthly = false
-      backup_yearly = false
-      user_data          = "${local.base_userdata}\n${local.ebs_userdata}"
+      backup_12hourly = false
+      backup_daily    = false
+      backup_weekly   = false
+      backup_monthly  = false
+      backup_yearly   = false
+      user_data       = "${local.base_userdata}\n${local.ebs_userdata}"
     }
   }
 
   scp_servers = {
-    scp_server_a1 = {
-      name_suffix        = "scp-server-a1"
+    scp_server_01 = {
+      name_suffix        = "scp-server-01"
       ami                = data.aws_ami.amazon_linux.id
       instance_type      = "c7i.xlarge"
       subnet_id          = module.vpc.private_multibyte_subnet_a_id
       security_group_ids = [module.security_groups.scp_server_sg_id]
-      root_volume_size       = 100
-      root_volume_iops       = 3000
+      root_volume_size   = 100
+      root_volume_iops   = 3000
 
       ebs_block_devices = [
         {
@@ -584,23 +647,23 @@ locals {
       ]
 
       backup_8hourly  = false
-      backup_12hourly  = false
-      backup_daily   = false
-      backup_weekly  = false
-      backup_monthly = false
-      backup_yearly = false
-      user_data          = "${local.base_userdata}\n${local.ebs_userdata}"
+      backup_12hourly = false
+      backup_daily    = false
+      backup_weekly   = false
+      backup_monthly  = false
+      backup_yearly   = false
+      user_data       = "${local.base_userdata}\n${local.ebs_userdata}"
 
     }
 
-    scp_server_b1 = {
-      name_suffix        = "scp-server-b1"
+    scp_server_02 = {
+      name_suffix        = "scp-server-02"
       ami                = data.aws_ami.amazon_linux.id
       instance_type      = "c7i.xlarge"
       subnet_id          = module.vpc.private_multibyte_subnet_a_id
       security_group_ids = [module.security_groups.scp_server_sg_id]
-      root_volume_size       = 100
-      root_volume_iops       = 3000
+      root_volume_size   = 100
+      root_volume_iops   = 3000
 
       ebs_block_devices = [
         {
@@ -615,24 +678,24 @@ locals {
       ]
 
       backup_8hourly  = false
-      backup_12hourly  = false
-      backup_daily   = false
-      backup_weekly  = false
-      backup_monthly = false
-      backup_yearly = false
-      user_data          = "${local.base_userdata}\n${local.ebs_userdata}"
+      backup_12hourly = false
+      backup_daily    = false
+      backup_weekly   = false
+      backup_monthly  = false
+      backup_yearly   = false
+      user_data       = "${local.base_userdata}\n${local.ebs_userdata}"
     }
   }
 
   ocs_servers = {
-    ocs_server_a1 = {
-      name_suffix        = "ocs-server-a1"
+    ocs_server_01 = {
+      name_suffix        = "ocs-server-01"
       ami                = data.aws_ami.amazon_linux.id
       instance_type      = "c7i.xlarge"
       subnet_id          = module.vpc.private_multibyte_subnet_a_id
       security_group_ids = [module.security_groups.ocs_server_sg_id]
-      root_volume_size       = 100
-      root_volume_iops       = 3000
+      root_volume_size   = 100
+      root_volume_iops   = 3000
 
       ebs_block_devices = [
         {
@@ -647,23 +710,23 @@ locals {
       ]
 
       backup_8hourly  = false
-      backup_12hourly  = false
-      backup_daily   = false
-      backup_weekly  = false
-      backup_monthly = false
-      backup_yearly = false
-      user_data          = "${local.base_userdata}\n${local.ebs_userdata}"
+      backup_12hourly = false
+      backup_daily    = false
+      backup_weekly   = false
+      backup_monthly  = false
+      backup_yearly   = false
+      user_data       = "${local.base_userdata}\n${local.ebs_userdata}"
 
     }
 
-    ocs_server_b1 = {
-      name_suffix        = "ocs-server-b1"
+    ocs_server_02 = {
+      name_suffix        = "ocs-server-02"
       ami                = data.aws_ami.amazon_linux.id
       instance_type      = "c7i.xlarge"
       subnet_id          = module.vpc.private_multibyte_subnet_a_id
       security_group_ids = [module.security_groups.ocs_server_sg_id]
-      root_volume_size       = 100
-      root_volume_iops       = 3000
+      root_volume_size   = 100
+      root_volume_iops   = 3000
 
       ebs_block_devices = [
         {
@@ -678,12 +741,12 @@ locals {
       ]
 
       backup_8hourly  = false
-      backup_12hourly  = false
-      backup_daily   = false
-      backup_weekly  = false
-      backup_monthly = false
-      backup_yearly = false
-      user_data          = "${local.base_userdata}\n${local.ebs_userdata}"
+      backup_12hourly = false
+      backup_daily    = false
+      backup_weekly   = false
+      backup_monthly  = false
+      backup_yearly   = false
+      user_data       = "${local.base_userdata}\n${local.ebs_userdata}"
     }
   }
 
@@ -696,9 +759,10 @@ locals {
     local.prometheus_grafana_loki_servers,
     local.ussd_servers,
     local.mcn_ivr_servers,
-    local.kalsym_mysql_db_servers,
+    # local.kalsym_mysql_db_servers,
     local.iot_web_frontend_servers,
     local.iot_web_backend_servers,
+    local.middleware_api_servers,
     local.dra_servers,
     local.smsc_servers,
     local.scp_servers,

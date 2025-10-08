@@ -51,6 +51,18 @@ module "vpc" {
   )
 }
 
+module "vpc_flowlogs"{
+  source = "./modules/vpc-flowlogs"
+  vpc_id = module.vpc.main_vpc_id
+  vpc_name = module.vpc.main_vpc_name
+  flow_logs_kms_key_id = data.aws_kms_key.cloudwatch_logs_cmk.arn
+    resource_name_prefix = local.resource_name_prefix
+
+  tags = merge(
+    local.standard_tags
+  )
+}
+
 ###############################################
 # Security Groups
 ###############################################
@@ -138,13 +150,208 @@ module "ec2_instances" {
 
   # Backup tags/flags
   backup_tag_prefix = try(each.value.backup_tag_prefix, "anchor-backup")
-  backup_8hourly     = try(each.value.backup_8hourly, false)
-  backup_12hourly     = try(each.value.backup_12hourly, false)
+  backup_8hourly    = try(each.value.backup_8hourly, false)
+  backup_12hourly   = try(each.value.backup_12hourly, false)
   backup_daily      = try(each.value.backup_daily, false)
   backup_weekly     = try(each.value.backup_weekly, false)
   backup_monthly    = try(each.value.backup_monthly, false)
-  backup_yearly    = try(each.value.backup_yearly, false)
+  backup_yearly     = try(each.value.backup_yearly, false)
 
+  tags = merge(
+    local.standard_tags
+  )
+}
+
+# module "external_alb" {
+#   source             = "./modules/alb-external"
+#   vpc_id             = module.vpc.main_vpc_id
+#   subnet_ids         = [module.vpc.public_subnet_a_id, module.vpc.public_subnet_b_id]
+#   security_group_ids = [module.security_groups.external_alb_sg_id]
+
+#   ec2_instance_ids = {
+#     # uat_server_instance_id = module.ec2_instances["uat_server"].ec2_instance_id
+#     # all_in_one_server_id   = module.ec2_instances["all_in_one_server"].ec2_instance_id
+#   }
+
+#   resource_name_prefix = local.resource_name_prefix
+
+#   tags = merge(
+#     local.standard_tags
+#   )
+# }
+
+# module "external_nlb" {
+#   source             = "./modules/nlb"
+#   vpc_id             = module.vpc.main_vpc_id
+#   subnet_ids         = [module.vpc.public_subnet_a_id, module.vpc.public_subnet_b_id]
+#   security_group_ids = [module.security_groups.external_alb_sg_id]
+#   target_alb_arn = module.external_alb.external_alb_arn
+
+#   resource_name_prefix = local.resource_name_prefix
+
+#   tags = merge(
+#     local.standard_tags
+#   )
+# }
+
+# module "internal_alb" {
+#   source             = "./modules/alb-internal"
+#   vpc_id             = module.vpc.main_vpc_id
+#   subnet_ids         = [module.vpc.private_internal_alb_subnet_a.id,module.vpc.private_internal_alb_subnet_b.id]
+#   security_group_ids = [module.security_groups.internal_alb_sg_id]
+
+#   ec2_instance_ids = {
+#     uat_server_instance_id = module.ec2_instances["iot_web_frontend_server_a1"].ec2_instance_id
+#     all_in_one_server_id   = module.ec2_instances["iot_web_frontend_server_b1"].ec2_instance_id
+#   }
+
+#   resource_name_prefix = local.resource_name_prefix
+
+#   tags = merge(
+#     local.standard_tags
+#   )
+# }
+
+
+
+
+
+
+#db
+module "multibyte_db_subnet_group" {
+  source               = "./modules/rds-subnets-group"
+  subnet_ids           = [module.vpc.private_multibyte_db_subnet_a_id, module.vpc.private_multibyte_db_subnet_b_id]
+  name = "${local.resource_name_prefix}-multibyte-db-subnet-group"
+
+  tags = merge(
+    local.standard_tags
+  )
+}
+
+module "multibyte_db_rds_postgresql" {
+  source = "./modules/rds-instance"
+
+  # ---- Naming ----
+  name          = "${local.resource_name_prefix}-db-01"
+  db_identifier = "${local.resource_name_prefix}-db-01"
+
+  # ---- Engine ----
+  db_engine         = "postgres"
+  db_engine_version = data.aws_rds_engine_version.postgres_latest.version
+
+  # ---- Instance Sizing ----
+  db_instance_class     = "db.m7i.xlarge"
+  db_storage_type       = "gp3"
+  db_storage_size       = 500
+  db_storage_iops       = 12000
+  db_storage_throughput = 500
+
+  # ---- Networking ----
+  db_subnet_group_name  = module.multibyte_db_subnet_group.db_subnet_group_name
+  db_security_group_ids = [module.security_groups.multibyte_postgresql_db_server_sg_id]
+  db_multi_az           = true
+  db_public_access      = false
+  db_port               = 5432
+
+  # ---- Authentication ----
+  db_master_user_name   = "masteruser"
+  secret_manager_cmk_id = data.aws_kms_key.secret_manager_cmk.arn
+  rds_cmk_id            = data.aws_kms_key.rds_cmk.arn
+  
+
+  # ---- Backup & Protection ----
+  db_backup_retention_period    = 35 # AWS Backup manages retention
+  db_copy_tags_to_snapshot      = false
+  db_deletion_protection        = false
+  db_auto_minor_version_upgrade = false
+
+  # ---- Apply & Maintenance ----
+  db_apply_immediately         = false
+  db_skip_final_snapshot       = true
+  db_final_snapshot_identifier = "${local.resource_name_prefix}-db-01-final-snapshot"
+  # You can set skip_final_snapshot = true in non-prod
+
+
+
+  # ---- Backup Tagging ----
+ backup_tag_prefix = "anchor-backup"
+  backup_8hourly    = false
+  backup_12hourly   = false # This one will get picked up by AWS Backup plan
+  backup_daily      = false
+  backup_weekly     = false
+  backup_monthly    = false
+  backup_yearly     = false
+
+  # ---- Global Variables ----
+  tags = merge(
+    local.standard_tags
+  )
+}
+
+module "kalsym_db_subnet_group" {
+  source               = "./modules/rds-subnets-group"
+  subnet_ids           = [module.vpc.private_kalsym_db_subnet_a_id, module.vpc.private_kalsym_db_subnet_b_id]
+  name = "${local.resource_name_prefix}-kalsym-db-subnet-group"
+
+  tags = merge(
+    local.standard_tags
+  )
+}
+
+module "kalsym_db_rds_mysql" {
+  source = "./modules/rds-instance"
+
+  # ---- Naming ----
+  name          = "${local.resource_name_prefix}-kalsym-db-01"
+  db_identifier = "${local.resource_name_prefix}-kalsym-db-01"
+
+  # ---- Engine ----
+  db_engine         = "mysql"
+  db_engine_version = data.aws_rds_engine_version.mysql_latest.version
+
+  # ---- Instance Sizing ----
+  db_instance_class     = "db.m7i.large"
+  db_storage_type       = "gp3"
+  db_storage_size       = 300
+  db_storage_iops       = null
+  db_storage_throughput = null
+
+  # ---- Networking ----
+  db_subnet_group_name  = module.kalsym_db_subnet_group.db_subnet_group_name
+  db_security_group_ids = [module.security_groups.kalsym_mysql_db_server_sg_id]
+  db_multi_az           = true
+  db_public_access      = false
+  db_port               = 3306
+
+  # ---- Authentication ----
+  db_master_user_name   = "masteruser"
+  secret_manager_cmk_id = data.aws_kms_key.secret_manager_cmk.arn
+  rds_cmk_id            = data.aws_kms_key.rds_cmk.arn
+
+  # ---- Backup & Protection ----
+  db_backup_retention_period    = 35 # AWS Backup manages retention
+  db_copy_tags_to_snapshot      = false
+  db_deletion_protection        = false
+  db_auto_minor_version_upgrade = false
+
+  # ---- Apply & Maintenance ----
+  db_apply_immediately         = false
+  db_skip_final_snapshot       = true
+  db_final_snapshot_identifier = "${local.resource_name_prefix}-kalsym-db-01-final-snapshot"
+  # You can set skip_final_snapshot = true in non-prod
+
+
+
+  # ---- Backup Tagging ----
+ backup_tag_prefix = "anchor-backup"
+  backup_8hourly    = false
+  backup_12hourly   = true # This one will get picked up by AWS Backup plan
+  backup_daily      = false
+  backup_weekly     = false
+  backup_monthly    = false
+  backup_yearly     = false
+
+  # ---- Global Variables ----
   tags = merge(
     local.standard_tags
   )

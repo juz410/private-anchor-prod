@@ -402,6 +402,52 @@ module "iot_web_backend_server_sg" {
   ]
 }
 
+module "middleware_api_server_sg" {
+  source  = "terraform-aws-modules/security-group/aws"
+  version = "~> 5.0"
+
+  name   = "${var.resource_name_prefix}-sg-middleware-api-server"
+  vpc_id = var.vpc_id
+  tags   = merge(var.tags, { Name = "${var.resource_name_prefix}-sg-middleware-api-server" })
+
+  ingress_with_cidr_blocks = [
+    # {
+    #   from_port   = 80
+    #   to_port     = 80
+    #   protocol    = "tcp"
+    #   description = "Allow HTTP traffic from anywhere"
+    #   cidr_blocks = "0.0.0.0/0"
+    # },
+    # {
+    #   from_port   = 443
+    #   to_port     = 443
+    #   protocol    = "tcp"
+    #   description = "Allow HTTPS traffic from anywhere"
+    #   cidr_blocks = "0.0.0.0/0"
+    # }
+  ]
+
+  ingress_with_source_security_group_id = [
+    # {
+    #   from_port                = 80
+    #   to_port                  = 80
+    #   protocol                 = "tcp"
+    #   description              = "Allow HTTP from external ALB"
+    #   source_security_group_id = module.external_alb_sg.security_group_id
+    # }
+  ]
+
+  egress_with_cidr_blocks = [
+    {
+      from_port   = 0
+      to_port     = 0
+      protocol    = "-1"
+      description = "Allow all outbound traffic"
+      cidr_blocks = "0.0.0.0/0"
+    }
+  ]
+}
+
 module "dra_server_sg" {
   source  = "terraform-aws-modules/security-group/aws"
   version = "~> 5.0"
@@ -612,13 +658,13 @@ module "multibyte_postgresql_db_server_sg" {
   ]
 
   ingress_with_source_security_group_id = [
-    # {
-    #   from_port                = 80
-    #   to_port                  = 80
-    #   protocol                 = "tcp"
-    #   description              = "Allow HTTP from external ALB"
-    #   source_security_group_id = module.external_alb_sg.security_group_id
-    # }
+    {
+      from_port                = 5432
+      to_port                  = 5432
+      protocol                 = "tcp"
+      description              = "Allow PostgreSQL Connection"
+      source_security_group_id = module.ocs_server_sg.security_group_id
+    }
   ]
 
   egress_with_cidr_blocks = [

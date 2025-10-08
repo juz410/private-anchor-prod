@@ -67,6 +67,7 @@ variable "placement_tenancy" {
   default = "default" # AWS default ("dedicated"/"host" require special accounts/hosts)
 }
 
+
 # Root volume settings
 variable "root_volume_size" {
   type    = number

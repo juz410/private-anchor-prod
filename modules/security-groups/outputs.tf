@@ -43,6 +43,10 @@ output "iot_web_backend_server_sg_id" {
   value = module.iot_web_backend_server_sg.security_group_id
 }
 
+output "middleware_api_server_sg_id" {
+  value = module.middleware_api_server_sg.security_group_id
+}
+
 # DRA
 output "dra_server_sg_id" {
   value = module.dra_server_sg.security_group_id

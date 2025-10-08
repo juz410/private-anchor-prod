@@ -1,11 +1,11 @@
 locals {
   backup_tags = {
     "${var.backup_tag_prefix}8hourly"  = tostring(var.backup_8hourly)
-    "${var.backup_tag_prefix}12hourly"  = tostring(var.backup_12hourly)
-    "${var.backup_tag_prefix}daily"   = tostring(var.backup_daily)
-    "${var.backup_tag_prefix}weekly"  = tostring(var.backup_weekly)
-    "${var.backup_tag_prefix}monthly" = tostring(var.backup_monthly)
-    "${var.backup_tag_prefix}monthly" = tostring(var.backup_monthly)
+    "${var.backup_tag_prefix}12hourly" = tostring(var.backup_12hourly)
+    "${var.backup_tag_prefix}daily"    = tostring(var.backup_daily)
+    "${var.backup_tag_prefix}weekly"   = tostring(var.backup_weekly)
+    "${var.backup_tag_prefix}monthly"  = tostring(var.backup_monthly)
+    "${var.backup_tag_prefix}monthly"  = tostring(var.backup_monthly)
   }
 }
 
