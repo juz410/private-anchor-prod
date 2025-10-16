@@ -69,9 +69,9 @@ echo "Preparing and mounting extra EBS volume..."
 DEV="/dev/nvme1n1"
 if [ -b "$DEV" ]; then
   mkfs.xfs -f "$DEV" || mkfs.ext4 -F "$DEV"
-  mkdir -p /DATA
-  echo "$DEV /DATA xfs defaults,nofail 0 2" >> /etc/fstab || \
-  echo "$DEV /DATA ext4 defaults,nofail 0 2" >> /etc/fstab
+  mkdir -p /data
+  echo "$DEV /data xfs defaults,nofail 0 2" >> /etc/fstab || \
+  echo "$DEV /data ext4 defaults,nofail 0 2" >> /etc/fstab
   mount -a
 fi
 EOF
@@ -108,6 +108,8 @@ locals {
       backup_weekly   = false
       backup_monthly  = false
       backup_yearly   = false
+      key_name = "${data.aws_key_pair.instances_key_pair.key_name}"
+
       user_data       = "${local.base_userdata}\n${local.ebs_userdata}"
 
     }
@@ -139,6 +141,7 @@ locals {
       backup_weekly   = false
       backup_monthly  = false
       backup_yearly   = false
+      key_name = "${data.aws_key_pair.instances_key_pair.key_name}"
       user_data       = "${local.base_userdata}\n${local.ebs_userdata}"
     }
   }
@@ -171,6 +174,7 @@ locals {
       backup_weekly   = false
       backup_monthly  = false
       backup_yearly   = false
+      key_name = "${data.aws_key_pair.instances_key_pair.key_name}"
       user_data       = "${local.base_userdata}\n${local.ebs_userdata}"
 
     }
@@ -202,6 +206,7 @@ locals {
       backup_weekly   = false
       backup_monthly  = false
       backup_yearly   = false
+      key_name = "${data.aws_key_pair.instances_key_pair.key_name}"
       user_data       = "${local.base_userdata}\n${local.ebs_userdata}"
     }
   }
@@ -234,6 +239,8 @@ locals {
       backup_weekly   = false
       backup_monthly  = false
       backup_yearly   = false
+      key_name = "${data.aws_key_pair.instances_key_pair.key_name}"
+
       user_data       = "${local.base_userdata}\n${local.ebs_userdata}"
 
     }
@@ -265,6 +272,8 @@ locals {
       backup_weekly   = false
       backup_monthly  = false
       backup_yearly   = false
+      key_name = "${data.aws_key_pair.instances_key_pair.key_name}"
+
       user_data       = "${local.base_userdata}\n${local.ebs_userdata}"
     }
   }
@@ -361,6 +370,8 @@ locals {
       backup_weekly   = false
       backup_monthly  = false
       backup_yearly   = false
+      key_name = "${data.aws_key_pair.instances_key_pair.key_name}"
+
       user_data       = "${local.base_userdata}\n${local.ebs_userdata}"
 
     }
@@ -369,7 +380,7 @@ locals {
       name_suffix        = "iot-frontend-02"
       ami                = data.aws_ami.amazon_linux.id
       instance_type      = "c7i.large"
-      subnet_id          = module.vpc.private_multibyte_subnet_a_id
+      subnet_id          = module.vpc.private_multibyte_subnet_b_id
       security_group_ids = [module.security_groups.iot_web_frontend_server_sg_id]
       root_volume_size   = 80
       root_volume_iops   = 3000
@@ -392,6 +403,8 @@ locals {
       backup_weekly   = false
       backup_monthly  = false
       backup_yearly   = false
+      key_name = "${data.aws_key_pair.instances_key_pair.key_name}"
+
       user_data       = "${local.base_userdata}\n${local.ebs_userdata}"
     }
   }
@@ -424,6 +437,8 @@ locals {
       backup_weekly   = false
       backup_monthly  = false
       backup_yearly   = false
+      key_name = "${data.aws_key_pair.instances_key_pair.key_name}"
+
       user_data       = "${local.base_userdata}\n${local.ebs_userdata}"
 
     }
@@ -432,7 +447,7 @@ locals {
       name_suffix        = "iot-backend-02"
       ami                = data.aws_ami.amazon_linux.id
       instance_type      = "m7i.large"
-      subnet_id          = module.vpc.private_multibyte_subnet_a_id
+      subnet_id          = module.vpc.private_multibyte_subnet_b_id
       security_group_ids = [module.security_groups.iot_web_backend_server_sg_id]
       root_volume_size   = 100
       root_volume_iops   = 3000
@@ -455,13 +470,15 @@ locals {
       backup_weekly   = false
       backup_monthly  = false
       backup_yearly   = false
+      key_name = "${data.aws_key_pair.instances_key_pair.key_name}"
+
       user_data       = "${local.base_userdata}\n${local.ebs_userdata}"
     }
   }
 
   middleware_api_servers = {
     middleware_api_server_01 = {
-      name_suffix        = "api-srv-01"
+      name_suffix        = "middleware-01"
       ami                = data.aws_ami.amazon_linux.id
       instance_type      = "c7i.large"
       subnet_id          = module.vpc.private_multibyte_subnet_a_id
@@ -487,15 +504,17 @@ locals {
       backup_weekly   = false
       backup_monthly  = false
       backup_yearly   = false
+      key_name = "${data.aws_key_pair.instances_key_pair.key_name}"
+
       user_data       = "${local.base_userdata}\n${local.ebs_userdata}"
 
     }
 
     middleware_api_server_02 = {
-      name_suffix        = "api-srv-02"
+      name_suffix        = "middleware-02"
       ami                = data.aws_ami.amazon_linux.id
       instance_type      = "c7i.large"
-      subnet_id          = module.vpc.private_multibyte_subnet_a_id
+      subnet_id          = module.vpc.private_multibyte_subnet_b_id
       security_group_ids = [module.security_groups.middleware_api_server_sg_id]
       root_volume_size   = 80
       root_volume_iops   = 3000
@@ -518,6 +537,8 @@ locals {
       backup_weekly   = false
       backup_monthly  = false
       backup_yearly   = false
+      key_name = "${data.aws_key_pair.instances_key_pair.key_name}"
+
       user_data       = "${local.base_userdata}\n${local.ebs_userdata}"
     }
   }
@@ -527,7 +548,7 @@ locals {
       name_suffix        = "dra-svr-01"
       ami                = data.aws_ami.amazon_linux.id
       instance_type      = "c7i.large"
-      subnet_id          = module.vpc.private_multibyte_subnet_a_id
+      subnet_id          = module.hk_vpc.private_dra_subnet_a_id
       security_group_ids = [module.security_groups.dra_server_sg_id]
       root_volume_size   = 50
       root_volume_iops   = 3000
@@ -538,6 +559,8 @@ locals {
       backup_weekly   = false
       backup_monthly  = false
       backup_yearly   = false
+      key_name = "${data.aws_key_pair.instances_key_pair.key_name}"
+
       user_data       = "${local.base_userdata}"
 
     }
@@ -546,7 +569,7 @@ locals {
       name_suffix        = "dra-svr-02"
       ami                = data.aws_ami.amazon_linux.id
       instance_type      = "c7i.large"
-      subnet_id          = module.vpc.private_multibyte_subnet_a_id
+      subnet_id          = module.hk_vpc.private_dra_subnet_b_id
       security_group_ids = [module.security_groups.dra_server_sg_id]
       root_volume_size   = 50
       root_volume_iops   = 3000
@@ -557,6 +580,8 @@ locals {
       backup_weekly   = false
       backup_monthly  = false
       backup_yearly   = false
+      key_name = "${data.aws_key_pair.instances_key_pair.key_name}"
+
       user_data       = "${local.base_userdata}"
     }
   }
@@ -589,6 +614,8 @@ locals {
       backup_weekly   = false
       backup_monthly  = false
       backup_yearly   = false
+      key_name = "${data.aws_key_pair.instances_key_pair.key_name}"
+
       user_data       = "${local.base_userdata}\n${local.ebs_userdata}"
 
     }
@@ -597,7 +624,7 @@ locals {
       name_suffix        = "smsc-srv-02"
       ami                = data.aws_ami.amazon_linux.id
       instance_type      = "c7i.xlarge"
-      subnet_id          = module.vpc.private_multibyte_subnet_a_id
+      subnet_id          = module.vpc.private_multibyte_subnet_b_id
       security_group_ids = [module.security_groups.smsc_server_sg_id]
       root_volume_size   = 100
       root_volume_iops   = 3000
@@ -620,6 +647,8 @@ locals {
       backup_weekly   = false
       backup_monthly  = false
       backup_yearly   = false
+      key_name = "${data.aws_key_pair.instances_key_pair.key_name}"
+
       user_data       = "${local.base_userdata}\n${local.ebs_userdata}"
     }
   }
@@ -652,6 +681,8 @@ locals {
       backup_weekly   = false
       backup_monthly  = false
       backup_yearly   = false
+      key_name = "${data.aws_key_pair.instances_key_pair.key_name}"
+
       user_data       = "${local.base_userdata}\n${local.ebs_userdata}"
 
     }
@@ -660,7 +691,7 @@ locals {
       name_suffix        = "scp-srv-02"
       ami                = data.aws_ami.amazon_linux.id
       instance_type      = "c7i.xlarge"
-      subnet_id          = module.vpc.private_multibyte_subnet_a_id
+      subnet_id          = module.vpc.private_multibyte_subnet_b_id
       security_group_ids = [module.security_groups.scp_server_sg_id]
       root_volume_size   = 100
       root_volume_iops   = 3000
@@ -683,6 +714,8 @@ locals {
       backup_weekly   = false
       backup_monthly  = false
       backup_yearly   = false
+      key_name = "${data.aws_key_pair.instances_key_pair.key_name}"
+
       user_data       = "${local.base_userdata}\n${local.ebs_userdata}"
     }
   }
@@ -715,6 +748,8 @@ locals {
       backup_weekly   = false
       backup_monthly  = false
       backup_yearly   = false
+      key_name = "${data.aws_key_pair.instances_key_pair.key_name}"
+
       user_data       = "${local.base_userdata}\n${local.ebs_userdata}"
 
     }
@@ -723,7 +758,7 @@ locals {
       name_suffix        = "ocs-srv-02"
       ami                = data.aws_ami.amazon_linux.id
       instance_type      = "c7i.xlarge"
-      subnet_id          = module.vpc.private_multibyte_subnet_a_id
+      subnet_id          = module.vpc.private_multibyte_subnet_b_id
       security_group_ids = [module.security_groups.ocs_server_sg_id]
       root_volume_size   = 100
       root_volume_iops   = 3000
@@ -746,8 +781,34 @@ locals {
       backup_weekly   = false
       backup_monthly  = false
       backup_yearly   = false
+      key_name = "${data.aws_key_pair.instances_key_pair.key_name}"
+
       user_data       = "${local.base_userdata}\n${local.ebs_userdata}"
     }
+
+    
+  }
+
+  test_servers = {
+    # test_server_01 = {
+    #   name_suffix        = "test-srv"
+    #   ami                = data.aws_ami.amazon_linux.id
+    #   instance_type      = "t3.micro"
+    #   subnet_id          = module.vpc.private_internal_alb_subnet_a_id
+    #   security_group_ids = [module.security_groups.internal_alb_sg_id]
+    #   root_volume_size   = 30
+    #   root_volume_iops   = 3000
+
+    #   backup_8hourly  = false
+    #   backup_12hourly = false
+    #   backup_daily    = false
+    #   backup_weekly   = false
+    #   backup_monthly  = false
+    #   backup_yearly   = false
+    #   key_name = "${data.aws_key_pair.instances_key_pair.key_name}"
+
+    # }
+    
   }
 
 
@@ -766,7 +827,8 @@ locals {
     local.dra_servers,
     local.smsc_servers,
     local.scp_servers,
-    local.ocs_servers
+    local.ocs_servers,
+    local.test_servers
   )
 }
 

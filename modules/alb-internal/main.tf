@@ -17,7 +17,7 @@ resource "aws_lb_target_group_attachment" "target_group_attachment" {
 
 resource "aws_lb" "internal_alb" {
   name               = "${var.resource_name_prefix}-internal-alb"
-  internal           = false
+  internal           = true
   load_balancer_type = "application"
   security_groups    = var.security_group_ids
   subnets            = var.subnet_ids

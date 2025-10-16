@@ -121,7 +121,7 @@ variable "tags" {
 
 variable "user_data" {
   type    = string
-  default = ""
+  default = null
 }
 
 #backups

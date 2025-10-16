@@ -27,3 +27,8 @@ data "aws_kms_key" "secret_manager_cmk" {
 data "aws_kms_key" "cloudwatch_logs_cmk" {
   key_id = "alias/anchor-prod-cloudwatch-logs-kms-001"
 }
+
+data "aws_key_pair" "instances_key_pair" {
+  key_name           = "anchor-prod-keypair-001"
+  include_public_key = true
+}

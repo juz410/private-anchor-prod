@@ -142,3 +142,9 @@ variable "backup_yearly" {
   type    = bool
   default = false
 }
+
+variable "db_delete_automated_backups" {
+  type = bool
+  default = false
+  
+}

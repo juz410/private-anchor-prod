@@ -1,3 +1,9 @@
+# External NLB
+output "external_nlb_sg_id" {
+  value = module.external_nlb_sg.security_group_id
+}
+
+
 # External ALB
 output "external_alb_sg_id" {
   value = module.external_alb_sg.security_group_id
@@ -74,4 +80,8 @@ output "multibyte_postgresql_db_server_sg_id" {
 
 output "interface_endpoint_sg_id" {
   value = module.interface_endpoint_sg.security_group_id
+}
+
+output "mongodb_endpoint_sg_id" {
+    value = module.mongodb_endpoint_sg.security_group_id
 }

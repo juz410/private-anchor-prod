@@ -93,10 +93,15 @@ variable "project" {
   type = string
 }
 
+variable "project_id" {
+  type = string
+}
+
+
 variable "owner" {
   type = string
 }
 
-variable "cost_center" {
-  type = string
-}
+# variable "cost_center" {
+#   type = string
+# }

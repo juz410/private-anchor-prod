@@ -135,19 +135,19 @@ resource "aws_internet_gateway" "igw" {
   depends_on = [aws_vpc.main_vpc]
 }
 
-#nat(temp)
-#eip for nat
-resource "aws_eip" "nat_eip" {
-  domain = "vpc"
-  tags   = merge(var.tags, { Name = "${var.resource_name_prefix}-nat-eip-temp" })
-}
-#nat #TODO: This nat is for temporary testing only will be removed once centralized networking is implemented
-resource "aws_nat_gateway" "nat" {
-  allocation_id = aws_eip.nat_eip.id
-  subnet_id     = aws_subnet.public_subnet_a.id
-  tags          = merge(var.tags, { Name = "${var.resource_name_prefix}-nat-temp" })
-  depends_on    = [aws_internet_gateway.igw]
-}
+# #nat(temp)
+# #eip for nat
+# resource "aws_eip" "nat_eip" {
+#   domain = "vpc"
+#   tags   = merge(var.tags, { Name = "${var.resource_name_prefix}-nat-eip-temp" })
+# }
+# #nat #TODO: This nat is for temporary testing only will be removed once centralized networking is implemented
+# resource "aws_nat_gateway" "nat" {
+#   allocation_id = aws_eip.nat_eip.id
+#   subnet_id     = aws_subnet.public_subnet_a.id
+#   tags          = merge(var.tags, { Name = "${var.resource_name_prefix}-nat-temp" })
+#   depends_on    = [aws_internet_gateway.igw]
+# }
 
 
 #public routes
@@ -174,7 +174,8 @@ resource "aws_route_table" "private_route_table" {
   vpc_id = aws_vpc.main_vpc.id
   route {
     cidr_block = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.nat.id
+    transit_gateway_id = var.tgw_id
+    # nat_gateway_id = aws_nat_gateway.nat.id
   }
   #TODO: Add 0.0.0.0 to attachment after testing is done
   #   route {

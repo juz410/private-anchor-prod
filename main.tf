@@ -2,14 +2,14 @@
 # Locals: naming + global standard tags
 ###############################################
 locals {
-  resource_name_prefix = "${var.project}-${var.environment}"
+  resource_name_prefix = "${var.project_id}-${var.environment}"
 
   # Global standard tags (applied everywhere)
   standard_tags = {
     Environment = var.environment
     Project     = var.project
     Owner       = var.owner
-    CostCenter  = var.cost_center
+    # CostCenter  = var.cost_center
   }
 }
 
@@ -63,12 +63,44 @@ module "vpc_flowlogs"{
   )
 }
 
+module "hk_vpc"{
+    source = "./modules/vpc-hk"
+    vpc_cidr = "10.20.16.0/24"
+    private_dra_subnet_a_cidr = "10.20.16.0/28"
+    private_dra_subnet_b_cidr = "10.20.16.16/28"
+    private_tgw_subnet_a_cidr = "10.20.16.32/28"
+    private_tgw_subnet_b_cidr = "10.20.16.48/28"
+    resource_name_prefix = local.resource_name_prefix
+
+    tgw_id = var.tgw_id
+
+  tags = merge(
+    local.standard_tags
+  )
+}
+
+module "hk_vpc_flowlogs"{
+    source = "./modules/vpc-flowlogs"
+  vpc_id = module.hk_vpc.main_vpc_id
+  vpc_name = module.hk_vpc.main_vpc_name
+  flow_logs_kms_key_id = data.aws_kms_key.cloudwatch_logs_cmk.arn
+    resource_name_prefix = local.resource_name_prefix
+
+  tags = merge(
+    local.standard_tags
+  )
+}
+
+
+
+
 ###############################################
 # Security Groups
 ###############################################
 module "security_groups" {
   source = "./modules/security-groups"
   vpc_id = module.vpc.main_vpc_id
+  vpc_hk_id = module.hk_vpc.main_vpc_id
 
   resource_name_prefix = local.resource_name_prefix
 
@@ -162,29 +194,30 @@ module "ec2_instances" {
   )
 }
 
-# module "external_alb" {
-#   source             = "./modules/alb-external"
-#   vpc_id             = module.vpc.main_vpc_id
-#   subnet_ids         = [module.vpc.public_subnet_a_id, module.vpc.public_subnet_b_id]
-#   security_group_ids = [module.security_groups.external_alb_sg_id]
+module "external_alb" {
+  source             = "./modules/alb-external"
+  vpc_id             = module.vpc.main_vpc_id
+  subnet_ids         = [module.vpc.public_subnet_a_id, module.vpc.public_subnet_b_id]
+  security_group_ids = [module.security_groups.external_alb_sg_id]
 
-#   ec2_instance_ids = {
-#     # uat_server_instance_id = module.ec2_instances["uat_server"].ec2_instance_id
-#     # all_in_one_server_id   = module.ec2_instances["all_in_one_server"].ec2_instance_id
-#   }
+  ec2_instance_ids = {
+    #testingonly
+    ussd_server01 = module.ec2_instances["ussd_server_01"].ec2_instance_id
+    # all_in_one_server_id   = module.ec2_instances["all_in_one_server"].ec2_instance_id
+  }
 
-#   resource_name_prefix = local.resource_name_prefix
+  resource_name_prefix = local.resource_name_prefix
 
-#   tags = merge(
-#     local.standard_tags
-#   )
-# }
+  tags = merge(
+    local.standard_tags
+  )
+}
 
 # module "external_nlb" {
 #   source             = "./modules/nlb"
 #   vpc_id             = module.vpc.main_vpc_id
 #   subnet_ids         = [module.vpc.public_subnet_a_id, module.vpc.public_subnet_b_id]
-#   security_group_ids = [module.security_groups.external_alb_sg_id]
+#   security_group_ids = [module.security_groups.external_nlb_sg_id]
 #   target_alb_arn = module.external_alb.external_alb_arn
 
 #   resource_name_prefix = local.resource_name_prefix
@@ -194,23 +227,23 @@ module "ec2_instances" {
 #   )
 # }
 
-# module "internal_alb" {
-#   source             = "./modules/alb-internal"
-#   vpc_id             = module.vpc.main_vpc_id
-#   subnet_ids         = [module.vpc.private_internal_alb_subnet_a.id,module.vpc.private_internal_alb_subnet_b.id]
-#   security_group_ids = [module.security_groups.internal_alb_sg_id]
+module "internal_alb" {
+  source             = "./modules/alb-internal"
+  vpc_id             = module.vpc.main_vpc_id
+  subnet_ids         = [module.vpc.private_internal_alb_subnet_a_id,module.vpc.private_internal_alb_subnet_b_id]
+  security_group_ids = [module.security_groups.internal_alb_sg_id]
 
-#   ec2_instance_ids = {
-#     uat_server_instance_id = module.ec2_instances["iot_web_frontend_server_a1"].ec2_instance_id
-#     all_in_one_server_id   = module.ec2_instances["iot_web_frontend_server_b1"].ec2_instance_id
-#   }
+  ec2_instance_ids = {
+    iot_web_frontend_server_01 = module.ec2_instances["iot_web_frontend_server_01"].ec2_instance_id
+    iot_web_frontend_server_02   = module.ec2_instances["iot_web_frontend_server_02"].ec2_instance_id
+  }
 
-#   resource_name_prefix = local.resource_name_prefix
+  resource_name_prefix = local.resource_name_prefix
 
-#   tags = merge(
-#     local.standard_tags
-#   )
-# }
+  tags = merge(
+    local.standard_tags
+  )
+}
 
 
 
@@ -232,8 +265,8 @@ module "multibyte_db_rds_postgresql" {
   source = "./modules/rds-instance"
 
   # ---- Naming ----
-  name          = "${local.resource_name_prefix}-db-01"
-  db_identifier = "${local.resource_name_prefix}-db-01"
+  name          = "${local.resource_name_prefix}-eastel-bss-db"
+  db_identifier = "${local.resource_name_prefix}-eastel-bss-db"
 
   # ---- Engine ----
   db_engine         = "postgres"
@@ -260,7 +293,7 @@ module "multibyte_db_rds_postgresql" {
   
 
   # ---- Backup & Protection ----
-  db_backup_retention_period    = 35 # AWS Backup manages retention
+  db_backup_retention_period    = null # AWS Backup manages retention
   db_copy_tags_to_snapshot      = false
   db_deletion_protection        = false
   db_auto_minor_version_upgrade = false
@@ -302,8 +335,8 @@ module "kalsym_db_rds_mysql" {
   source = "./modules/rds-instance"
 
   # ---- Naming ----
-  name          = "${local.resource_name_prefix}-kalsym-db-01"
-  db_identifier = "${local.resource_name_prefix}-kalsym-db-01"
+  name          = "${local.resource_name_prefix}-eastel-db"
+  db_identifier = "${local.resource_name_prefix}-eastel-db"
 
   # ---- Engine ----
   db_engine         = "mysql"
@@ -329,7 +362,7 @@ module "kalsym_db_rds_mysql" {
   rds_cmk_id            = data.aws_kms_key.rds_cmk.arn
 
   # ---- Backup & Protection ----
-  db_backup_retention_period    = 35 # AWS Backup manages retention
+  db_backup_retention_period    = null # AWS Backup manages retention
   db_copy_tags_to_snapshot      = false
   db_deletion_protection        = false
   db_auto_minor_version_upgrade = false
@@ -345,13 +378,29 @@ module "kalsym_db_rds_mysql" {
   # ---- Backup Tagging ----
  backup_tag_prefix = "anchor-backup"
   backup_8hourly    = false
-  backup_12hourly   = true # This one will get picked up by AWS Backup plan
+  backup_12hourly   = false # This one will get picked up by AWS Backup plan
   backup_daily      = false
   backup_weekly     = false
   backup_monthly    = false
   backup_yearly     = false
 
   # ---- Global Variables ----
+  tags = merge(
+    local.standard_tags
+  )
+}
+
+module "mongodb_endpoint" {
+  source             = "./modules/mongodb-endpoint"
+  vpc_id             = module.vpc.main_vpc_id
+  security_group_ids = [module.security_groups.mongodb_endpoint_sg_id]
+  subnet_ids = [
+    module.vpc.private_kalsym_ecs_subnet_a_id,
+    module.vpc.private_kalsym_ecs_subnet_b_id,
+  ]
+
+  resource_name_prefix = local.resource_name_prefix
+
   tags = merge(
     local.standard_tags
   )

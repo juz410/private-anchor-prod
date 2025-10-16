@@ -55,6 +55,8 @@ storage_throughput  = var.db_storage_type == "gp3" ? var.db_storage_throughput :
     local.backup_tags,
     { Name = var.name }
   )
+  delete_automated_backups = var.db_delete_automated_backups
+  
 
   # Optional: hook up parameter group if you have one
   # parameter_group_name     = aws_db_parameter_group.pg.name
