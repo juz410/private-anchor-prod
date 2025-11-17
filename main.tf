@@ -101,6 +101,11 @@ module "security_groups" {
   source = "./modules/security-groups"
   vpc_id = module.vpc.main_vpc_id
   vpc_hk_id = module.hk_vpc.main_vpc_id
+  private_kalsym_ecs_subnet_a_cidr = var.private_kalsym_ecs_subnet_a_cidr
+  private_kalsym_ecs_subnet_b_cidr = var.private_kalsym_ecs_subnet_b_cidr
+  main_vpc_cidr = var.vpc_cidr
+  hk_vpc_cidr = module.hk_vpc.vpc_cidr
+  testbed_vpc_cidr = "10.100.8.0/22"
 
   resource_name_prefix = local.resource_name_prefix
 
@@ -213,19 +218,19 @@ module "external_alb" {
   )
 }
 
-# module "external_nlb" {
-#   source             = "./modules/nlb"
-#   vpc_id             = module.vpc.main_vpc_id
-#   subnet_ids         = [module.vpc.public_subnet_a_id, module.vpc.public_subnet_b_id]
-#   security_group_ids = [module.security_groups.external_nlb_sg_id]
-#   target_alb_arn = module.external_alb.external_alb_arn
+module "external_nlb" {
+  source             = "./modules/nlb"
+  vpc_id             = module.vpc.main_vpc_id
+  subnet_ids         = [module.vpc.public_subnet_a_id, module.vpc.public_subnet_b_id]
+  security_group_ids = [module.security_groups.external_nlb_sg_id]
+  target_alb_arn = module.external_alb.external_alb_arn
 
-#   resource_name_prefix = local.resource_name_prefix
+  resource_name_prefix = local.resource_name_prefix
 
-#   tags = merge(
-#     local.standard_tags
-#   )
-# }
+  tags = merge(
+    local.standard_tags
+  )
+}
 
 module "internal_alb" {
   source             = "./modules/alb-internal"
@@ -295,25 +300,26 @@ module "multibyte_db_rds_postgresql" {
   # ---- Backup & Protection ----
   db_backup_retention_period    = null # AWS Backup manages retention
   db_copy_tags_to_snapshot      = false
-  db_deletion_protection        = false
-  db_auto_minor_version_upgrade = false
+  db_deletion_protection        = true
+  db_auto_minor_version_upgrade = true
 
   # ---- Apply & Maintenance ----
   db_apply_immediately         = false
   db_skip_final_snapshot       = true
-  db_final_snapshot_identifier = "${local.resource_name_prefix}-db-01-final-snapshot"
+  db_final_snapshot_identifier = "${local.resource_name_prefix}-eastel-bss-db-final-snapshot"
+  db_enabled_cloudwatch_logs_exports = ["iam-db-auth-error", "postgresql", "upgrade"]
   # You can set skip_final_snapshot = true in non-prod
 
 
 
   # ---- Backup Tagging ----
  backup_tag_prefix = "anchor-backup"
-  backup_8hourly    = false
-  backup_12hourly   = false # This one will get picked up by AWS Backup plan
-  backup_daily      = false
-  backup_weekly     = false
-  backup_monthly    = false
-  backup_yearly     = false
+  backup_8hourly    = true
+  backup_12hourly   = true # This one will get picked up by AWS Backup plan
+  backup_daily      = true
+  backup_weekly     = true
+  backup_monthly    = true
+  backup_yearly     = true
 
   # ---- Global Variables ----
   tags = merge(
@@ -364,25 +370,26 @@ module "kalsym_db_rds_mysql" {
   # ---- Backup & Protection ----
   db_backup_retention_period    = null # AWS Backup manages retention
   db_copy_tags_to_snapshot      = false
-  db_deletion_protection        = false
-  db_auto_minor_version_upgrade = false
+  db_deletion_protection        = true
+  db_auto_minor_version_upgrade = true
 
   # ---- Apply & Maintenance ----
   db_apply_immediately         = false
   db_skip_final_snapshot       = true
-  db_final_snapshot_identifier = "${local.resource_name_prefix}-kalsym-db-01-final-snapshot"
+  db_final_snapshot_identifier = "${local.resource_name_prefix}-eastel-db-final-snapshot"
   # You can set skip_final_snapshot = true in non-prod
+  db_enabled_cloudwatch_logs_exports = ["audit", "error", "general","iam-db-auth-error", "slowquery"]
 
 
 
   # ---- Backup Tagging ----
  backup_tag_prefix = "anchor-backup"
-  backup_8hourly    = false
-  backup_12hourly   = false # This one will get picked up by AWS Backup plan
-  backup_daily      = false
-  backup_weekly     = false
-  backup_monthly    = false
-  backup_yearly     = false
+  backup_8hourly    = true
+  backup_12hourly   = true # This one will get picked up by AWS Backup plan
+  backup_daily      = true
+  backup_weekly     = true
+  backup_monthly    = true
+  backup_yearly     = true
 
   # ---- Global Variables ----
   tags = merge(

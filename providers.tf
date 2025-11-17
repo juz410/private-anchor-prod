@@ -9,5 +9,5 @@ terraform {
 
 provider "aws" {
   region  = "ap-southeast-5"
-  profile = "GAP_Admin-Anchor_Production"
+  profile = "anchor-prod"
 }

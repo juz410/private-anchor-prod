@@ -7,6 +7,10 @@ output "main_vpc_id" {
   value = aws_vpc.main_vpc.id
 }
 
+output "vpc_cidr"{
+  value = var.vpc_cidr
+}
+
 output "main_vpc_name" {
   value = aws_vpc.main_vpc.tags_all["Name"]
 }

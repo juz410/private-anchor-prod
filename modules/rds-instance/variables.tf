@@ -148,3 +148,8 @@ variable "db_delete_automated_backups" {
   default = false
   
 }
+
+variable "db_enabled_cloudwatch_logs_exports" {
+  type = list(string)
+  
+}

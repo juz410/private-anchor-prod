@@ -104,13 +104,16 @@ locals {
 
       backup_8hourly  = false
       backup_12hourly = false
-      backup_daily    = false
+      backup_daily    = true
       backup_weekly   = false
       backup_monthly  = false
       backup_yearly   = false
       key_name = "${data.aws_key_pair.instances_key_pair.key_name}"
+      disable_api_termination = true
+
 
       user_data       = "${local.base_userdata}\n${local.ebs_userdata}"
+
 
     }
 
@@ -137,12 +140,16 @@ locals {
 
       backup_8hourly  = false
       backup_12hourly = false
-      backup_daily    = false
+      backup_daily    = true
       backup_weekly   = false
       backup_monthly  = false
       backup_yearly   = false
       key_name = "${data.aws_key_pair.instances_key_pair.key_name}"
+      disable_api_termination = true
+
       user_data       = "${local.base_userdata}\n${local.ebs_userdata}"
+
+      
     }
   }
 
@@ -170,11 +177,13 @@ locals {
 
       backup_8hourly  = false
       backup_12hourly = false
-      backup_daily    = false
+      backup_daily    = true
       backup_weekly   = false
       backup_monthly  = false
       backup_yearly   = false
       key_name = "${data.aws_key_pair.instances_key_pair.key_name}"
+      disable_api_termination = true
+
       user_data       = "${local.base_userdata}\n${local.ebs_userdata}"
 
     }
@@ -202,11 +211,13 @@ locals {
 
       backup_8hourly  = false
       backup_12hourly = false
-      backup_daily    = false
+      backup_daily    = true
       backup_weekly   = false
       backup_monthly  = false
       backup_yearly   = false
       key_name = "${data.aws_key_pair.instances_key_pair.key_name}"
+      disable_api_termination = true
+
       user_data       = "${local.base_userdata}\n${local.ebs_userdata}"
     }
   }
@@ -235,11 +246,13 @@ locals {
 
       backup_8hourly  = false
       backup_12hourly = false
-      backup_daily    = false
+      backup_daily    = true
       backup_weekly   = false
       backup_monthly  = false
       backup_yearly   = false
       key_name = "${data.aws_key_pair.instances_key_pair.key_name}"
+      disable_api_termination = true
+
 
       user_data       = "${local.base_userdata}\n${local.ebs_userdata}"
 
@@ -268,11 +281,13 @@ locals {
 
       backup_8hourly  = false
       backup_12hourly = false
-      backup_daily    = false
+      backup_daily    = true
       backup_weekly   = false
       backup_monthly  = false
       backup_yearly   = false
       key_name = "${data.aws_key_pair.instances_key_pair.key_name}"
+      disable_api_termination = true
+
 
       user_data       = "${local.base_userdata}\n${local.ebs_userdata}"
     }
@@ -302,7 +317,7 @@ locals {
 
   #     backup_8hourly  = false
   #     backup_12hourly = false
-  #     backup_daily    = false
+  #     backup_daily    = true
   #     backup_weekly   = false
   #     backup_monthly  = false
   #     backup_yearly   = false
@@ -333,7 +348,7 @@ locals {
 
   #     backup_8hourly  = false
   #     backup_12hourly = false
-  #     backup_daily    = false
+  #     backup_daily    = true
   #     backup_weekly   = false
   #     backup_monthly  = false
   #     backup_yearly   = false
@@ -366,11 +381,13 @@ locals {
 
       backup_8hourly  = false
       backup_12hourly = false
-      backup_daily    = false
+      backup_daily    = true
       backup_weekly   = false
       backup_monthly  = false
       backup_yearly   = false
       key_name = "${data.aws_key_pair.instances_key_pair.key_name}"
+      disable_api_termination = true
+
 
       user_data       = "${local.base_userdata}\n${local.ebs_userdata}"
 
@@ -399,11 +416,13 @@ locals {
 
       backup_8hourly  = false
       backup_12hourly = false
-      backup_daily    = false
+      backup_daily    = true
       backup_weekly   = false
       backup_monthly  = false
       backup_yearly   = false
       key_name = "${data.aws_key_pair.instances_key_pair.key_name}"
+      disable_api_termination = true
+
 
       user_data       = "${local.base_userdata}\n${local.ebs_userdata}"
     }
@@ -433,11 +452,13 @@ locals {
 
       backup_8hourly  = false
       backup_12hourly = false
-      backup_daily    = false
+      backup_daily    = true
       backup_weekly   = false
       backup_monthly  = false
       backup_yearly   = false
       key_name = "${data.aws_key_pair.instances_key_pair.key_name}"
+      disable_api_termination = true
+
 
       user_data       = "${local.base_userdata}\n${local.ebs_userdata}"
 
@@ -466,11 +487,13 @@ locals {
 
       backup_8hourly  = false
       backup_12hourly = false
-      backup_daily    = false
+      backup_daily    = true
       backup_weekly   = false
       backup_monthly  = false
       backup_yearly   = false
       key_name = "${data.aws_key_pair.instances_key_pair.key_name}"
+      disable_api_termination = true
+
 
       user_data       = "${local.base_userdata}\n${local.ebs_userdata}"
     }
@@ -500,11 +523,13 @@ locals {
 
       backup_8hourly  = false
       backup_12hourly = false
-      backup_daily    = false
+      backup_daily    = true
       backup_weekly   = false
       backup_monthly  = false
       backup_yearly   = false
       key_name = "${data.aws_key_pair.instances_key_pair.key_name}"
+      disable_api_termination = true
+
 
       user_data       = "${local.base_userdata}\n${local.ebs_userdata}"
 
@@ -533,11 +558,13 @@ locals {
 
       backup_8hourly  = false
       backup_12hourly = false
-      backup_daily    = false
+      backup_daily    = true
       backup_weekly   = false
       backup_monthly  = false
       backup_yearly   = false
       key_name = "${data.aws_key_pair.instances_key_pair.key_name}"
+      disable_api_termination = true
+
 
       user_data       = "${local.base_userdata}\n${local.ebs_userdata}"
     }
@@ -555,11 +582,15 @@ locals {
 
       backup_8hourly  = false
       backup_12hourly = false
-      backup_daily    = false
+      backup_daily    = true
       backup_weekly   = false
       backup_monthly  = false
       backup_yearly   = false
       key_name = "${data.aws_key_pair.instances_key_pair.key_name}"
+      disable_api_termination = true
+
+
+      source_dest_check = false
 
       user_data       = "${local.base_userdata}"
 
@@ -576,11 +607,15 @@ locals {
 
       backup_8hourly  = false
       backup_12hourly = false
-      backup_daily    = false
+      backup_daily    = true
       backup_weekly   = false
       backup_monthly  = false
       backup_yearly   = false
       key_name = "${data.aws_key_pair.instances_key_pair.key_name}"
+      disable_api_termination = true
+
+
+      source_dest_check = false
 
       user_data       = "${local.base_userdata}"
     }
@@ -610,11 +645,13 @@ locals {
 
       backup_8hourly  = false
       backup_12hourly = false
-      backup_daily    = false
+      backup_daily    = true
       backup_weekly   = false
       backup_monthly  = false
       backup_yearly   = false
       key_name = "${data.aws_key_pair.instances_key_pair.key_name}"
+      disable_api_termination = true
+
 
       user_data       = "${local.base_userdata}\n${local.ebs_userdata}"
 
@@ -643,11 +680,13 @@ locals {
 
       backup_8hourly  = false
       backup_12hourly = false
-      backup_daily    = false
+      backup_daily    = true
       backup_weekly   = false
       backup_monthly  = false
       backup_yearly   = false
       key_name = "${data.aws_key_pair.instances_key_pair.key_name}"
+      disable_api_termination = true
+
 
       user_data       = "${local.base_userdata}\n${local.ebs_userdata}"
     }
@@ -677,11 +716,13 @@ locals {
 
       backup_8hourly  = false
       backup_12hourly = false
-      backup_daily    = false
+      backup_daily    = true
       backup_weekly   = false
       backup_monthly  = false
       backup_yearly   = false
       key_name = "${data.aws_key_pair.instances_key_pair.key_name}"
+      disable_api_termination = true
+
 
       user_data       = "${local.base_userdata}\n${local.ebs_userdata}"
 
@@ -710,11 +751,13 @@ locals {
 
       backup_8hourly  = false
       backup_12hourly = false
-      backup_daily    = false
+      backup_daily    = true
       backup_weekly   = false
       backup_monthly  = false
       backup_yearly   = false
       key_name = "${data.aws_key_pair.instances_key_pair.key_name}"
+      disable_api_termination = true
+
 
       user_data       = "${local.base_userdata}\n${local.ebs_userdata}"
     }
@@ -744,11 +787,13 @@ locals {
 
       backup_8hourly  = false
       backup_12hourly = false
-      backup_daily    = false
+      backup_daily    = true
       backup_weekly   = false
       backup_monthly  = false
       backup_yearly   = false
       key_name = "${data.aws_key_pair.instances_key_pair.key_name}"
+      disable_api_termination = true
+
 
       user_data       = "${local.base_userdata}\n${local.ebs_userdata}"
 
@@ -777,11 +822,13 @@ locals {
 
       backup_8hourly  = false
       backup_12hourly = false
-      backup_daily    = false
+      backup_daily    = true
       backup_weekly   = false
       backup_monthly  = false
       backup_yearly   = false
       key_name = "${data.aws_key_pair.instances_key_pair.key_name}"
+      disable_api_termination = true
+
 
       user_data       = "${local.base_userdata}\n${local.ebs_userdata}"
     }
@@ -801,11 +848,13 @@ locals {
 
     #   backup_8hourly  = false
     #   backup_12hourly = false
-    #   backup_daily    = false
+    #   backup_daily    = true
     #   backup_weekly   = false
     #   backup_monthly  = false
     #   backup_yearly   = false
     #   key_name = "${data.aws_key_pair.instances_key_pair.key_name}"
+      # disable_api_termination = true
+
 
     # }
     

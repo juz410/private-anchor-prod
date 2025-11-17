@@ -56,7 +56,8 @@ storage_throughput  = var.db_storage_type == "gp3" ? var.db_storage_throughput :
     { Name = var.name }
   )
   delete_automated_backups = var.db_delete_automated_backups
-  
+  enabled_cloudwatch_logs_exports = var.db_enabled_cloudwatch_logs_exports
+
 
   # Optional: hook up parameter group if you have one
   # parameter_group_name     = aws_db_parameter_group.pg.name
