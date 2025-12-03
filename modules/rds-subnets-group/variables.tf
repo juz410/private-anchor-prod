@@ -3,8 +3,8 @@ variable "subnet_ids" {
 }
 
 variable "name" {
-    type = string
-  
+  type = string
+
 }
 
 variable "tags" {

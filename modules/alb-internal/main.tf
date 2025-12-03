@@ -16,13 +16,20 @@
 # }
 
 resource "aws_lb" "internal_alb" {
-  name               = "${var.resource_name_prefix}-internal-alb"
-  internal           = true
-  load_balancer_type = "application"
-  security_groups    = var.security_group_ids
-  subnets            = var.subnet_ids
-  tags               = var.tags
- enable_deletion_protection = true
+  name                       = "${var.resource_name_prefix}-internal-alb"
+  internal                   = true
+  load_balancer_type         = "application"
+  security_groups            = var.security_group_ids
+  subnets                    = var.subnet_ids
+  tags                       = var.tags
+  enable_deletion_protection = true
+  drop_invalid_header_fields = true
+
+  access_logs {
+    bucket = var.lb_access_logs_bucket
+    prefix = "ALB/${var.current_account_id}/${var.resource_name_prefix}-internal-alb"
+    enabled = true
+  }
 }
 
 # resource "aws_lb_listener" "http" {

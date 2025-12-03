@@ -20,6 +20,15 @@ variable "target_alb_arn" {
 #     type = string
 # }
 
+variable "lb_access_logs_bucket" {
+  type = string
+}
+
+variable "current_account_id" {
+  type = string
+}
+
+
 
 #tagging
 

@@ -51,41 +51,43 @@ module "vpc" {
   )
 }
 
-module "vpc_flowlogs"{
-  source = "./modules/vpc-flowlogs"
-  vpc_id = module.vpc.main_vpc_id
-  vpc_name = module.vpc.main_vpc_name
-  flow_logs_kms_key_id = data.aws_kms_key.cloudwatch_logs_cmk.arn
-    resource_name_prefix = local.resource_name_prefix
+module "vpc_flowlogs" {
+  source                   = "./modules/vpc-flowlogs"
+  vpc_id                   = module.vpc.main_vpc_id
+  vpc_name                 = module.vpc.main_vpc_name
+  flow_logs_kms_key_id     = data.aws_kms_key.cloudwatch_logs_cmk.arn
+  resource_name_prefix     = local.resource_name_prefix
+  flow_logs_retention_days = 365
+
 
   tags = merge(
     local.standard_tags
   )
 }
 
-module "hk_vpc"{
-    source = "./modules/vpc-hk"
-    vpc_cidr = "10.20.16.0/24"
-    private_dra_subnet_a_cidr = "10.20.16.0/28"
-    private_dra_subnet_b_cidr = "10.20.16.16/28"
-    private_tgw_subnet_a_cidr = "10.20.16.32/28"
-    private_tgw_subnet_b_cidr = "10.20.16.48/28"
-    resource_name_prefix = local.resource_name_prefix
+module "hk_vpc" {
+  source                    = "./modules/vpc-hk"
+  vpc_cidr                  = "10.20.16.0/24"
+  private_dra_subnet_a_cidr = "10.20.16.0/28"
+  private_dra_subnet_b_cidr = "10.20.16.16/28"
+  private_tgw_subnet_a_cidr = "10.20.16.32/28"
+  private_tgw_subnet_b_cidr = "10.20.16.48/28"
+  resource_name_prefix      = local.resource_name_prefix
 
-    tgw_id = var.tgw_id
+  tgw_id = var.tgw_id
 
   tags = merge(
     local.standard_tags
   )
 }
 
-module "hk_vpc_flowlogs"{
-    source = "./modules/vpc-flowlogs"
-  vpc_id = module.hk_vpc.main_vpc_id
-  vpc_name = module.hk_vpc.main_vpc_name
-  flow_logs_kms_key_id = data.aws_kms_key.cloudwatch_logs_cmk.arn
-    resource_name_prefix = local.resource_name_prefix
-
+module "hk_vpc_flowlogs" {
+  source                   = "./modules/vpc-flowlogs"
+  vpc_id                   = module.hk_vpc.main_vpc_id
+  vpc_name                 = module.hk_vpc.main_vpc_name
+  flow_logs_kms_key_id     = data.aws_kms_key.cloudwatch_logs_cmk.arn
+  resource_name_prefix     = local.resource_name_prefix
+  flow_logs_retention_days = 365
   tags = merge(
     local.standard_tags
   )
@@ -98,14 +100,14 @@ module "hk_vpc_flowlogs"{
 # Security Groups
 ###############################################
 module "security_groups" {
-  source = "./modules/security-groups"
-  vpc_id = module.vpc.main_vpc_id
-  vpc_hk_id = module.hk_vpc.main_vpc_id
+  source                           = "./modules/security-groups"
+  vpc_id                           = module.vpc.main_vpc_id
+  vpc_hk_id                        = module.hk_vpc.main_vpc_id
   private_kalsym_ecs_subnet_a_cidr = var.private_kalsym_ecs_subnet_a_cidr
   private_kalsym_ecs_subnet_b_cidr = var.private_kalsym_ecs_subnet_b_cidr
-  main_vpc_cidr = var.vpc_cidr
-  hk_vpc_cidr = module.hk_vpc.vpc_cidr
-  testbed_vpc_cidr = "10.100.8.0/22"
+  main_vpc_cidr                    = var.vpc_cidr
+  hk_vpc_cidr                      = module.hk_vpc.vpc_cidr
+  testbed_vpc_cidr                 = "10.100.8.0/22"
 
   resource_name_prefix = local.resource_name_prefix
 
@@ -212,6 +214,8 @@ module "external_alb" {
   }
 
   resource_name_prefix = local.resource_name_prefix
+  lb_access_logs_bucket = data.aws_s3_bucket.lb_access_logs_bucket.bucket
+  current_account_id = data.aws_caller_identity.current.account_id
 
   tags = merge(
     local.standard_tags
@@ -223,9 +227,12 @@ module "external_nlb" {
   vpc_id             = module.vpc.main_vpc_id
   subnet_ids         = [module.vpc.public_subnet_a_id, module.vpc.public_subnet_b_id]
   security_group_ids = [module.security_groups.external_nlb_sg_id]
-  target_alb_arn = module.external_alb.external_alb_arn
+  target_alb_arn     = module.external_alb.external_alb_arn
 
   resource_name_prefix = local.resource_name_prefix
+
+  lb_access_logs_bucket = data.aws_s3_bucket.lb_access_logs_bucket.bucket
+  current_account_id = data.aws_caller_identity.current.account_id
 
   tags = merge(
     local.standard_tags
@@ -235,15 +242,18 @@ module "external_nlb" {
 module "internal_alb" {
   source             = "./modules/alb-internal"
   vpc_id             = module.vpc.main_vpc_id
-  subnet_ids         = [module.vpc.private_internal_alb_subnet_a_id,module.vpc.private_internal_alb_subnet_b_id]
+  subnet_ids         = [module.vpc.private_internal_alb_subnet_a_id, module.vpc.private_internal_alb_subnet_b_id]
   security_group_ids = [module.security_groups.internal_alb_sg_id]
 
   ec2_instance_ids = {
     iot_web_frontend_server_01 = module.ec2_instances["iot_web_frontend_server_01"].ec2_instance_id
-    iot_web_frontend_server_02   = module.ec2_instances["iot_web_frontend_server_02"].ec2_instance_id
+    iot_web_frontend_server_02 = module.ec2_instances["iot_web_frontend_server_02"].ec2_instance_id
   }
 
   resource_name_prefix = local.resource_name_prefix
+
+    lb_access_logs_bucket = data.aws_s3_bucket.lb_access_logs_bucket.bucket
+  current_account_id = data.aws_caller_identity.current.account_id
 
   tags = merge(
     local.standard_tags
@@ -257,9 +267,9 @@ module "internal_alb" {
 
 #db
 module "multibyte_db_subnet_group" {
-  source               = "./modules/rds-subnets-group"
-  subnet_ids           = [module.vpc.private_multibyte_db_subnet_a_id, module.vpc.private_multibyte_db_subnet_b_id]
-  name = "${local.resource_name_prefix}-multibyte-db-subnet-group"
+  source     = "./modules/rds-subnets-group"
+  subnet_ids = [module.vpc.private_multibyte_db_subnet_a_id, module.vpc.private_multibyte_db_subnet_b_id]
+  name       = "${local.resource_name_prefix}-multibyte-db-subnet-group"
 
   tags = merge(
     local.standard_tags
@@ -295,7 +305,7 @@ module "multibyte_db_rds_postgresql" {
   db_master_user_name   = "masteruser"
   secret_manager_cmk_id = data.aws_kms_key.secret_manager_cmk.arn
   rds_cmk_id            = data.aws_kms_key.rds_cmk.arn
-  
+
 
   # ---- Backup & Protection ----
   db_backup_retention_period    = null # AWS Backup manages retention
@@ -304,16 +314,16 @@ module "multibyte_db_rds_postgresql" {
   db_auto_minor_version_upgrade = true
 
   # ---- Apply & Maintenance ----
-  db_apply_immediately         = false
-  db_skip_final_snapshot       = true
-  db_final_snapshot_identifier = "${local.resource_name_prefix}-eastel-bss-db-final-snapshot"
+  db_apply_immediately               = false
+  db_skip_final_snapshot             = true
+  db_final_snapshot_identifier       = "${local.resource_name_prefix}-eastel-bss-db-final-snapshot"
   db_enabled_cloudwatch_logs_exports = ["iam-db-auth-error", "postgresql", "upgrade"]
   # You can set skip_final_snapshot = true in non-prod
 
 
 
   # ---- Backup Tagging ----
- backup_tag_prefix = "anchor-backup"
+  backup_tag_prefix = "anchor-backup"
   backup_8hourly    = true
   backup_12hourly   = true # This one will get picked up by AWS Backup plan
   backup_daily      = true
@@ -328,9 +338,9 @@ module "multibyte_db_rds_postgresql" {
 }
 
 module "kalsym_db_subnet_group" {
-  source               = "./modules/rds-subnets-group"
-  subnet_ids           = [module.vpc.private_kalsym_db_subnet_a_id, module.vpc.private_kalsym_db_subnet_b_id]
-  name = "${local.resource_name_prefix}-kalsym-db-subnet-group"
+  source     = "./modules/rds-subnets-group"
+  subnet_ids = [module.vpc.private_kalsym_db_subnet_a_id, module.vpc.private_kalsym_db_subnet_b_id]
+  name       = "${local.resource_name_prefix}-kalsym-db-subnet-group"
 
   tags = merge(
     local.standard_tags
@@ -378,12 +388,12 @@ module "kalsym_db_rds_mysql" {
   db_skip_final_snapshot       = true
   db_final_snapshot_identifier = "${local.resource_name_prefix}-eastel-db-final-snapshot"
   # You can set skip_final_snapshot = true in non-prod
-  db_enabled_cloudwatch_logs_exports = ["audit", "error", "general","iam-db-auth-error", "slowquery"]
+  db_enabled_cloudwatch_logs_exports = ["audit", "error", "general", "iam-db-auth-error", "slowquery"]
 
 
 
   # ---- Backup Tagging ----
- backup_tag_prefix = "anchor-backup"
+  backup_tag_prefix = "anchor-backup"
   backup_8hourly    = true
   backup_12hourly   = true # This one will get picked up by AWS Backup plan
   backup_daily      = true

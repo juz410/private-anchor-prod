@@ -2,12 +2,12 @@ variable "vpc_id" {
   type = string
 }
 
-variable "vpc_hk_id"{
+variable "vpc_hk_id" {
   type = string
 }
 
 #ecr_cidr
-variable "private_kalsym_ecs_subnet_a_cidr"{
+variable "private_kalsym_ecs_subnet_a_cidr" {
   type = string
 }
 
@@ -15,7 +15,7 @@ variable "private_kalsym_ecs_subnet_b_cidr" {
   type = string
 }
 
-variable "main_vpc_cidr"{
+variable "main_vpc_cidr" {
   type = string
 }
 

@@ -21,11 +21,11 @@ resource "aws_db_instance" "rds" {
   vpc_security_group_ids = var.db_security_group_ids
 
   # Storage (gp3)
-  storage_type       = var.db_storage_type
-  allocated_storage  = var.db_storage_size
+  storage_type      = var.db_storage_type
+  allocated_storage = var.db_storage_size
 
-  iops                = contains(["gp3", "io1", "io2"], var.db_storage_type) ? var.db_storage_iops : null
-storage_throughput  = var.db_storage_type == "gp3" ? var.db_storage_throughput : null
+  iops               = contains(["gp3", "io1", "io2"], var.db_storage_type) ? var.db_storage_iops : null
+  storage_throughput = var.db_storage_type == "gp3" ? var.db_storage_throughput : null
 
   multi_az            = var.db_multi_az
   publicly_accessible = var.db_public_access
@@ -55,9 +55,12 @@ storage_throughput  = var.db_storage_type == "gp3" ? var.db_storage_throughput :
     local.backup_tags,
     { Name = var.name }
   )
-  delete_automated_backups = var.db_delete_automated_backups
+  delete_automated_backups        = var.db_delete_automated_backups
   enabled_cloudwatch_logs_exports = var.db_enabled_cloudwatch_logs_exports
 
+  lifecycle {
+    ignore_changes = [engine_version]
+  }
 
   # Optional: hook up parameter group if you have one
   # parameter_group_name     = aws_db_parameter_group.pg.name

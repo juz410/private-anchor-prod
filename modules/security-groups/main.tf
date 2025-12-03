@@ -307,7 +307,7 @@ module "ussd_server_sg" {
 
 
   ingress_with_source_security_group_id = [
-     {
+    {
       from_port                = 80
       to_port                  = 80
       protocol                 = "tcp"
@@ -344,7 +344,7 @@ module "ussd_server_sg" {
     },
 
 
-  
+
     {
       from_port                = 11001
       to_port                  = 11001
@@ -382,8 +382,8 @@ module "ussd_server_sg" {
       description              = "Allow HTTP 8773 from eastel jumphost"
       source_security_group_id = "sg-0247a03b9b047bddc"
     },
-    
-    
+
+
   ]
 
   egress_with_cidr_blocks = [
@@ -430,14 +430,14 @@ module "mcn_ivr_server_sg" {
   ]
 
   ingress_with_source_security_group_id = [
-        {
+    {
       from_port                = 22
       to_port                  = 22
       protocol                 = "tcp"
       description              = "Allow SSH from eastel jumphost"
       source_security_group_id = "sg-0247a03b9b047bddc"
     },
- 
+
     {
       from_port                = 9626
       to_port                  = 9626
@@ -551,7 +551,7 @@ module "kalsym_mysql_db_server_sg" {
       description              = "Allow mysql from eastel jumphost"
       source_security_group_id = "sg-0247a03b9b047bddc"
     },
-     {
+    {
       from_port                = 3306
       to_port                  = 3306
       protocol                 = "tcp"
@@ -594,7 +594,7 @@ module "kalsym_mysql_db_server_sg" {
       source_security_group_id = module.kalsym_mysql_db_server_sg.security_group_id
     }
 
-    
+
 
   ]
 
@@ -681,7 +681,7 @@ module "iot_web_frontend_server_sg" {
   ]
 
   ingress_with_source_security_group_id = [
-  
+
     {
       from_port                = 22
       to_port                  = 22
@@ -696,7 +696,7 @@ module "iot_web_frontend_server_sg" {
       description              = "Allow SSH from eastel jumphost"
       source_security_group_id = "sg-0247a03b9b047bddc"
     },
-     {
+    {
       from_port                = 8080
       to_port                  = 8080
       protocol                 = "tcp"
@@ -841,7 +841,7 @@ module "iot_web_backend_server_sg" {
       description              = "Allow 8080 HTTP from eastel jumphost"
       source_security_group_id = "sg-0247a03b9b047bddc"
     },
-    
+
 
   ]
 
@@ -1048,7 +1048,7 @@ module "smsc_server_sg" {
   tags   = merge(var.tags, { Name = "${var.resource_name_prefix}-sg-smsc-server" })
 
   ingress_with_cidr_blocks = [
- 
+
   ]
 
   ingress_with_source_security_group_id = [
@@ -1155,7 +1155,7 @@ module "scp_server_sg" {
   vpc_id = var.vpc_id
   tags   = merge(var.tags, { Name = "${var.resource_name_prefix}-sg-scp-server" })
 
-   ingress_with_cidr_blocks = [
+  ingress_with_cidr_blocks = [
 
   ]
 
@@ -1411,7 +1411,7 @@ module "multibyte_postgresql_db_server_sg" {
       description              = "Allow Middleware API Servers"
       source_security_group_id = module.middleware_api_server_sg.security_group_id
     },
-     {
+    {
       from_port                = 0
       to_port                  = 0
       protocol                 = "-1"
@@ -1468,8 +1468,8 @@ module "interface_endpoint_sg" {
 }
 
 module "mongodb_endpoint_sg" {
-  source  = "terraform-aws-modules/security-group/aws"
-  version = "~> 5.0"
+  source      = "terraform-aws-modules/security-group/aws"
+  version     = "~> 5.0"
   description = "SG for mongodb"
 
   name   = "${var.resource_name_prefix}-sg-mongodb-endpoint"
@@ -1507,8 +1507,8 @@ module "mongodb_endpoint_sg" {
 #FARGATE SERVICES SG
 
 module "ecs_fargate_api_gateway_sg" {
-  source  = "terraform-aws-modules/security-group/aws"
-  version = "~> 5.0"
+  source      = "terraform-aws-modules/security-group/aws"
+  version     = "~> 5.0"
   description = "SG for ecs fargate api gateway"
 
   name   = "${var.resource_name_prefix}-sg-ecs-fargate-api-gateway"
@@ -1562,12 +1562,12 @@ module "ecs_fargate_asset_sg" {
   ingress_with_source_security_group_id = [
 
     {
-  from_port                = 0
-  to_port                  = 0
-  protocol                 = "-1"
-  description              = "Allow Everything From Self"
-  source_security_group_id = module.ecs_fargate_asset_sg.security_group_id
-}
+      from_port                = 0
+      to_port                  = 0
+      protocol                 = "-1"
+      description              = "Allow Everything From Self"
+      source_security_group_id = module.ecs_fargate_asset_sg.security_group_id
+    }
   ]
 
   egress_with_cidr_blocks = [{
@@ -1591,12 +1591,12 @@ module "ecs_fargate_communication_sg" {
   ingress_with_source_security_group_id = [
 
     {
-  from_port                = 0
-  to_port                  = 0
-  protocol                 = "-1"
-  description              = "Allow Everything From Self"
-  source_security_group_id = module.ecs_fargate_communication_sg.security_group_id
-}
+      from_port                = 0
+      to_port                  = 0
+      protocol                 = "-1"
+      description              = "Allow Everything From Self"
+      source_security_group_id = module.ecs_fargate_communication_sg.security_group_id
+    }
   ]
   egress_with_cidr_blocks = [{
     from_port = 0, to_port = 0, protocol = "-1", description = "Allow all outbound traffic", cidr_blocks = "0.0.0.0/0"
@@ -1614,12 +1614,12 @@ module "ecs_fargate_discount_sg" {
 
   ingress_with_source_security_group_id = [
     {
-  from_port                = 0
-  to_port                  = 0
-  protocol                 = "-1"
-  description              = "Allow Everything From Self"
-  source_security_group_id = module.ecs_fargate_discount_sg.security_group_id
-}
+      from_port                = 0
+      to_port                  = 0
+      protocol                 = "-1"
+      description              = "Allow Everything From Self"
+      source_security_group_id = module.ecs_fargate_discount_sg.security_group_id
+    }
   ]
   egress_with_cidr_blocks = [{
     from_port = 0, to_port = 0, protocol = "-1", description = "Allow all outbound traffic", cidr_blocks = "0.0.0.0/0"
@@ -1636,14 +1636,14 @@ module "ecs_fargate_discovery_sg" {
   tags   = merge(var.tags, { Name = "${var.resource_name_prefix}-sg-ecs-fargate-discovery" })
 
   ingress_with_source_security_group_id = [
-    
+
     {
-  from_port                = 0
-  to_port                  = 0
-  protocol                 = "-1"
-  description              = "Allow Everything From Self"
-  source_security_group_id = module.ecs_fargate_discovery_sg.security_group_id
-}
+      from_port                = 0
+      to_port                  = 0
+      protocol                 = "-1"
+      description              = "Allow Everything From Self"
+      source_security_group_id = module.ecs_fargate_discovery_sg.security_group_id
+    }
   ]
   egress_with_cidr_blocks = [{
     from_port = 0, to_port = 0, protocol = "-1", description = "Allow all outbound traffic", cidr_blocks = "0.0.0.0/0"
@@ -1662,12 +1662,12 @@ module "ecs_fargate_membership_sg" {
   ingress_with_source_security_group_id = [
 
     {
-  from_port                = 0
-  to_port                  = 0
-  protocol                 = "-1"
-  description              = "Allow Everything From Self"
-  source_security_group_id = module.ecs_fargate_membership_sg.security_group_id
-}
+      from_port                = 0
+      to_port                  = 0
+      protocol                 = "-1"
+      description              = "Allow Everything From Self"
+      source_security_group_id = module.ecs_fargate_membership_sg.security_group_id
+    }
   ]
   egress_with_cidr_blocks = [{
     from_port = 0, to_port = 0, protocol = "-1", description = "Allow all outbound traffic", cidr_blocks = "0.0.0.0/0"
@@ -1684,7 +1684,7 @@ module "ecs_fargate_mnp_sg" {
   tags   = merge(var.tags, { Name = "${var.resource_name_prefix}-sg-ecs-fargate-mnp" })
 
   ingress_with_source_security_group_id = [
-{
+    {
       from_port                = 9085
       to_port                  = 9085
       protocol                 = "tcp"
@@ -1692,12 +1692,12 @@ module "ecs_fargate_mnp_sg" {
       source_security_group_id = module.external_alb_sg.security_group_id
     },
     {
-  from_port                = 0
-  to_port                  = 0
-  protocol                 = "-1"
-  description              = "Allow Everything From Self"
-  source_security_group_id = module.ecs_fargate_mnp_sg.security_group_id
-}
+      from_port                = 0
+      to_port                  = 0
+      protocol                 = "-1"
+      description              = "Allow Everything From Self"
+      source_security_group_id = module.ecs_fargate_mnp_sg.security_group_id
+    }
 
   ]
   egress_with_cidr_blocks = [{
@@ -1717,12 +1717,12 @@ module "ecs_fargate_order_sg" {
   ingress_with_source_security_group_id = [
 
     {
-  from_port                = 0
-  to_port                  = 0
-  protocol                 = "-1"
-  description              = "Allow Everything From Self"
-  source_security_group_id = module.ecs_fargate_order_sg.security_group_id
-}
+      from_port                = 0
+      to_port                  = 0
+      protocol                 = "-1"
+      description              = "Allow Everything From Self"
+      source_security_group_id = module.ecs_fargate_order_sg.security_group_id
+    }
 
   ]
   egress_with_cidr_blocks = [{
@@ -1741,12 +1741,12 @@ module "ecs_fargate_organization_sg" {
 
   ingress_with_source_security_group_id = [
     {
-  from_port                = 0
-  to_port                  = 0
-  protocol                 = "-1"
-  description              = "Allow Everything From Self"
-  source_security_group_id = module.ecs_fargate_organization_sg.security_group_id
-}
+      from_port                = 0
+      to_port                  = 0
+      protocol                 = "-1"
+      description              = "Allow Everything From Self"
+      source_security_group_id = module.ecs_fargate_organization_sg.security_group_id
+    }
   ]
   egress_with_cidr_blocks = [{
     from_port = 0, to_port = 0, protocol = "-1", description = "Allow all outbound traffic", cidr_blocks = "0.0.0.0/0"
@@ -1765,12 +1765,12 @@ module "ecs_fargate_payment_sg" {
   ingress_with_source_security_group_id = [
 
     {
-  from_port                = 0
-  to_port                  = 0
-  protocol                 = "-1"
-  description              = "Allow Everything From Self"
-  source_security_group_id = module.ecs_fargate_payment_sg.security_group_id
-}
+      from_port                = 0
+      to_port                  = 0
+      protocol                 = "-1"
+      description              = "Allow Everything From Self"
+      source_security_group_id = module.ecs_fargate_payment_sg.security_group_id
+    }
   ]
   egress_with_cidr_blocks = [{
     from_port = 0, to_port = 0, protocol = "-1", description = "Allow all outbound traffic", cidr_blocks = "0.0.0.0/0"
@@ -1789,12 +1789,12 @@ module "ecs_fargate_product_sg" {
   ingress_with_source_security_group_id = [
 
     {
-  from_port                = 0
-  to_port                  = 0
-  protocol                 = "-1"
-  description              = "Allow Everything From Self"
-  source_security_group_id = module.ecs_fargate_product_sg.security_group_id
-}
+      from_port                = 0
+      to_port                  = 0
+      protocol                 = "-1"
+      description              = "Allow Everything From Self"
+      source_security_group_id = module.ecs_fargate_product_sg.security_group_id
+    }
   ]
   egress_with_cidr_blocks = [{
     from_port = 0, to_port = 0, protocol = "-1", description = "Allow all outbound traffic", cidr_blocks = "0.0.0.0/0"
@@ -1811,7 +1811,7 @@ module "ecs_fargate_provisioning_sg" {
   tags   = merge(var.tags, { Name = "${var.resource_name_prefix}-sg-ecs-fargate-provisioning" })
 
   ingress_with_source_security_group_id = [
-	{
+    {
       from_port                = 8090
       to_port                  = 8090
       protocol                 = "tcp"
@@ -1819,12 +1819,12 @@ module "ecs_fargate_provisioning_sg" {
       source_security_group_id = module.internal_alb_sg.security_group_id
     },
     {
-  from_port                = 0
-  to_port                  = 0
-  protocol                 = "-1"
-  description              = "Allow Everything From Self"
-  source_security_group_id = module.ecs_fargate_provisioning_sg.security_group_id
-}
+      from_port                = 0
+      to_port                  = 0
+      protocol                 = "-1"
+      description              = "Allow Everything From Self"
+      source_security_group_id = module.ecs_fargate_provisioning_sg.security_group_id
+    }
 
   ]
   egress_with_cidr_blocks = [{
@@ -1844,12 +1844,12 @@ module "ecs_fargate_reporting_sg" {
   ingress_with_source_security_group_id = [
 
     {
-  from_port                = 0
-  to_port                  = 0
-  protocol                 = "-1"
-  description              = "Allow Everything From Self"
-  source_security_group_id = module.ecs_fargate_reporting_sg.security_group_id
-}
+      from_port                = 0
+      to_port                  = 0
+      protocol                 = "-1"
+      description              = "Allow Everything From Self"
+      source_security_group_id = module.ecs_fargate_reporting_sg.security_group_id
+    }
   ]
   egress_with_cidr_blocks = [{
     from_port = 0, to_port = 0, protocol = "-1", description = "Allow all outbound traffic", cidr_blocks = "0.0.0.0/0"
@@ -1866,14 +1866,14 @@ module "ecs_fargate_telco_sg" {
   tags   = merge(var.tags, { Name = "${var.resource_name_prefix}-sg-ecs-fargate-telco" })
 
   ingress_with_source_security_group_id = [
- 
+
     {
-  from_port                = 0
-  to_port                  = 0
-  protocol                 = "-1"
-  description              = "Allow Everything From Self"
-  source_security_group_id = module.ecs_fargate_telco_sg.security_group_id
-}
+      from_port                = 0
+      to_port                  = 0
+      protocol                 = "-1"
+      description              = "Allow Everything From Self"
+      source_security_group_id = module.ecs_fargate_telco_sg.security_group_id
+    }
   ]
   egress_with_cidr_blocks = [{
     from_port = 0, to_port = 0, protocol = "-1", description = "Allow all outbound traffic", cidr_blocks = "0.0.0.0/0"
@@ -1892,12 +1892,12 @@ module "ecs_fargate_transaction_sg" {
   ingress_with_source_security_group_id = [
 
     {
-  from_port                = 0
-  to_port                  = 0
-  protocol                 = "-1"
-  description              = "Allow Everything From Self"
-  source_security_group_id = module.ecs_fargate_transaction_sg.security_group_id
-}
+      from_port                = 0
+      to_port                  = 0
+      protocol                 = "-1"
+      description              = "Allow Everything From Self"
+      source_security_group_id = module.ecs_fargate_transaction_sg.security_group_id
+    }
   ]
   egress_with_cidr_blocks = [{
     from_port = 0, to_port = 0, protocol = "-1", description = "Allow all outbound traffic", cidr_blocks = "0.0.0.0/0"
@@ -1915,12 +1915,12 @@ module "ecs_fargate_user_sg" {
 
   ingress_with_source_security_group_id = [
     {
-  from_port                = 0
-  to_port                  = 0
-  protocol                 = "-1"
-  description              = "Allow Everything From Self"
-  source_security_group_id = module.ecs_fargate_user_sg.security_group_id
-}
+      from_port                = 0
+      to_port                  = 0
+      protocol                 = "-1"
+      description              = "Allow Everything From Self"
+      source_security_group_id = module.ecs_fargate_user_sg.security_group_id
+    }
   ]
   egress_with_cidr_blocks = [{
     from_port = 0, to_port = 0, protocol = "-1", description = "Allow all outbound traffic", cidr_blocks = "0.0.0.0/0"
@@ -1938,14 +1938,14 @@ module "ecs_fargate_rabbit_mq_sg" {
 
   ingress_with_source_security_group_id = [
 
-   {
-  from_port                = 0
-  to_port                  = 0
-  protocol                 = "-1"
-  description              = "Allow Everything From Self"
-  source_security_group_id = module.ecs_fargate_rabbit_mq_sg.security_group_id
-},
-{
+    {
+      from_port                = 0
+      to_port                  = 0
+      protocol                 = "-1"
+      description              = "Allow Everything From Self"
+      source_security_group_id = module.ecs_fargate_rabbit_mq_sg.security_group_id
+    },
+    {
       from_port                = 15672
       to_port                  = 15672
       protocol                 = "tcp"
@@ -1969,13 +1969,13 @@ module "ecs_fargate_alloy_sg" {
 
   ingress_with_source_security_group_id = [
 
-   {
-  from_port                = 0
-  to_port                  = 0
-  protocol                 = "-1"
-  description              = "Allow Everything From Self"
-  source_security_group_id = module.ecs_fargate_alloy_sg.security_group_id
-}
+    {
+      from_port                = 0
+      to_port                  = 0
+      protocol                 = "-1"
+      description              = "Allow Everything From Self"
+      source_security_group_id = module.ecs_fargate_alloy_sg.security_group_id
+    }
   ]
   egress_with_cidr_blocks = [{
     from_port = 0, to_port = 0, protocol = "-1", description = "Allow all outbound traffic", cidr_blocks = "0.0.0.0/0"
@@ -1994,19 +1994,50 @@ module "efs_rabbit_mq_sg" {
 
   ingress_with_source_security_group_id = [
     {
-  from_port                = 0
-  to_port                  = 0
-  protocol                 = "-1"
-  description              = "Allow Everything From Self"
-  source_security_group_id = module.efs_rabbit_mq_sg.security_group_id
-},
-{
-  from_port                = 2049
-  to_port                  = 2049
-  protocol                 = "tcp"
-  description              = "Allow 2049 Rabbit MQ Protocol From Self"
-  source_security_group_id = module.ecs_fargate_rabbit_mq_sg.security_group_id
+      from_port                = 0
+      to_port                  = 0
+      protocol                 = "-1"
+      description              = "Allow Everything From Self"
+      source_security_group_id = module.efs_rabbit_mq_sg.security_group_id
+    },
+    {
+      from_port                = 2049
+      to_port                  = 2049
+      protocol                 = "tcp"
+      description              = "Allow 2049 Rabbit MQ Protocol From Self"
+      source_security_group_id = module.ecs_fargate_rabbit_mq_sg.security_group_id
+    }
+  ]
+  egress_with_cidr_blocks = [{
+    from_port = 0, to_port = 0, protocol = "-1", description = "Allow all outbound traffic", cidr_blocks = "0.0.0.0/0"
+  }]
 }
+
+module "sftp_server_sg" {
+  source      = "terraform-aws-modules/security-group/aws"
+  version     = "~> 5.0"
+  description = "SG for sftp server"
+
+  name   = "${var.resource_name_prefix}-sg-sftp-server"
+  vpc_id = var.vpc_id
+  tags   = merge(var.tags, { Name = "${var.resource_name_prefix}-sg-sftp-server" })
+
+  ingress_with_source_security_group_id = [
+
+    {
+      from_port                = 0
+      to_port                  = 0
+      protocol                 = "-1"
+      description              = "Allow Everything From Self"
+      source_security_group_id = module.sftp_server_sg.security_group_id
+    },
+    {
+      from_port                = 22
+      to_port                  = 22
+      protocol                 = "tcp"
+      description              = "Allow SSH From eastel jumphost"
+      source_security_group_id = "sg-0247a03b9b047bddc"
+    },
   ]
   egress_with_cidr_blocks = [{
     from_port = 0, to_port = 0, protocol = "-1", description = "Allow all outbound traffic", cidr_blocks = "0.0.0.0/0"

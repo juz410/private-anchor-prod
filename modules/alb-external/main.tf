@@ -15,15 +15,24 @@
 #   port             = 80
 # }
 
+
+
+
 resource "aws_lb" "external_alb" {
-  name               = "${var.resource_name_prefix}-external-alb"
-  internal           = false
-  load_balancer_type = "application"
-  security_groups    = var.security_group_ids
-  subnets            = var.subnet_ids
-  tags               = var.tags
-  enable_deletion_protection = true
+  name                             = "${var.resource_name_prefix}-external-alb"
+  internal                         = false
+  load_balancer_type               = "application"
+  security_groups                  = var.security_group_ids
+  subnets                          = var.subnet_ids
+  tags                             = var.tags
+  enable_deletion_protection       = true
   enable_cross_zone_load_balancing = true
+  drop_invalid_header_fields       = true
+  access_logs {
+    bucket = var.lb_access_logs_bucket
+    prefix = "ALB/${var.current_account_id}/${var.resource_name_prefix}-external-alb"
+    enabled = true
+  }
 
 }
 

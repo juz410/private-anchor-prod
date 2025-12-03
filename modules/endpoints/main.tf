@@ -28,7 +28,7 @@ resource "aws_vpc_endpoint" "s3_interface_endpoint" {
 # security_group_ids = var.security_group_ids
 #   subnet_ids = var.subnet_ids
 
-#   
+
 
 #   private_dns_enabled = true
 #   tags                = merge(var.tags, { Name = "${var.resource_name_prefix}-ssm-interface-endpoint" })

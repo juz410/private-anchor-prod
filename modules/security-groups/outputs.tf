@@ -83,5 +83,11 @@ output "interface_endpoint_sg_id" {
 }
 
 output "mongodb_endpoint_sg_id" {
-    value = module.mongodb_endpoint_sg.security_group_id
+  value = module.mongodb_endpoint_sg.security_group_id
+}
+
+
+
+output "sftp_server_sg_id" {
+  value = module.sftp_server_sg.security_group_id
 }

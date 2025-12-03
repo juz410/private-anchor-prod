@@ -7,23 +7,23 @@ resource "aws_eip" "nlb_b" {
 }
 
 resource "aws_lb_target_group" "target_group" {
-  name         = "${var.resource_name_prefix}-nlb-tg"
-  port         = 443
+  name = "${var.resource_name_prefix}-nlb-tg"
+  port = 443
   health_check {
-          enabled             = true
-          healthy_threshold   = 5
-          interval            = 30
-          matcher             = "200-399"
-          path                = "/api/actuator/health"
-          port                = "9085"
-          protocol            = "HTTPS"
-          timeout             = 6
-          unhealthy_threshold = 2
-        }
-  protocol     = "TCP"
-  vpc_id       = var.vpc_id
-  tags         = var.tags
-  target_type  = "alb"
+    enabled             = true
+    healthy_threshold   = 5
+    interval            = 30
+    matcher             = "200-399"
+    path                = "/api/actuator/health"
+    port                = "9085"
+    protocol            = "HTTPS"
+    timeout             = 6
+    unhealthy_threshold = 2
+  }
+  protocol    = "TCP"
+  vpc_id      = var.vpc_id
+  tags        = var.tags
+  target_type = "alb"
 
 }
 
@@ -38,8 +38,8 @@ resource "aws_lb" "external_nlb" {
   load_balancer_type = "network"
   tags               = var.tags
 
-    enable_cross_zone_load_balancing = true
-  enable_deletion_protection = true
+  enable_cross_zone_load_balancing = true
+  enable_deletion_protection       = true
 
   subnet_mapping {
     subnet_id     = var.subnet_ids[0]
@@ -49,6 +49,12 @@ resource "aws_lb" "external_nlb" {
   subnet_mapping {
     subnet_id     = var.subnet_ids[1]
     allocation_id = aws_eip.nlb_b.id
+  }
+
+  access_logs {
+    bucket = var.lb_access_logs_bucket
+    prefix = "NLB/${var.current_account_id}/${var.resource_name_prefix}-external-nlb"
+    enabled = true
   }
 }
 

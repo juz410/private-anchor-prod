@@ -19,7 +19,7 @@ resource "aws_cloudwatch_log_group" "vpc_flow" {
 
 # --- IAM ROLE for Flow Logs to write to CloudWatch Logs ---
 resource "aws_iam_role" "vpc_flowlog_role" {
-  name  = "${var.vpc_name}-iam-vpcflow-role"
+  name = "${var.vpc_name}-iam-vpcflow-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -34,8 +34,8 @@ resource "aws_iam_role" "vpc_flowlog_role" {
 }
 
 resource "aws_iam_role_policy" "vpc_flowlog_to_cwl" {
-  name  = "${var.vpc_name}-iam-pol-vpcflow-cwl"
-  role  = aws_iam_role.vpc_flowlog_role.id
+  name = "${var.vpc_name}-iam-pol-vpcflow-cwl"
+  role = aws_iam_role.vpc_flowlog_role.id
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -60,11 +60,11 @@ resource "aws_iam_role_policy" "vpc_flowlog_to_cwl" {
 # --- VPC FLOW LOG ---
 resource "aws_flow_log" "vpc_flow" {
 
-  vpc_id                  = var.vpc_id
-  log_destination_type    = "cloud-watch-logs"
-  log_destination         = aws_cloudwatch_log_group.vpc_flow.arn
-  iam_role_arn            = aws_iam_role.vpc_flowlog_role.arn
-  traffic_type            = var.flow_logs_traffic_type
+  vpc_id                   = var.vpc_id
+  log_destination_type     = "cloud-watch-logs"
+  log_destination          = aws_cloudwatch_log_group.vpc_flow.arn
+  iam_role_arn             = aws_iam_role.vpc_flowlog_role.arn
+  traffic_type             = var.flow_logs_traffic_type
   max_aggregation_interval = 60 # seconds (use 600 for cost efficiency)
 
   tags = merge(var.tags, {
