@@ -48,3 +48,4 @@ df.txt
 *.txt
 *.json
 ssm_ssh_config
+tfplan

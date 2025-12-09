@@ -1,10 +1,9 @@
 module "external_nlb_sg" {
   source  = "terraform-aws-modules/security-group/aws"
   version = "~> 5.0"
-
-  name   = "${var.resource_name_prefix}-sg-external_nlb"
-  vpc_id = var.vpc_id
-  tags   = merge(var.tags, { Name = "${var.resource_name_prefix}-sg-external_nlb" })
+  name    = "${var.resource_name_prefix}-sg-external_nlb"
+  vpc_id  = var.vpc_id
+  tags    = merge(var.tags, { Name = "${var.resource_name_prefix}-sg-external_nlb" })
 
   ingress_with_cidr_blocks = [
     {
@@ -1440,21 +1439,21 @@ module "interface_endpoint_sg" {
   tags   = merge(var.tags, { Name = "${var.resource_name_prefix}-sg-interface-endpoint" })
 
   ingress_with_source_security_group_id = [
-    # {
-    #   from_port                = 443
-    #   to_port                  = 443
-    #   protocol                 = "tcp"
-    #   description              = "Allow HTTPS traffic from UAT servers"
-    #   source_security_group_id = module.uat_server_sg.security_group_id
-    # },
-    # {
-    #   from_port                = 443
-    #   to_port                  = 443
-    #   protocol                 = "tcp"
-    #   description              = "Allow HTTPS traffic from All-in-One servers"
-    #   source_security_group_id = module.all_in_one_server_sg.security_group_id
-    # }
+
   ]
+
+  ingress_with_cidr_blocks = [
+
+    {
+      from_port   = 443
+      to_port     = 443
+      protocol    = "tcp"
+      description = "Allow HTTPS Traffic from the VPC"
+      cidr_blocks = "10.100.4.0/22"
+    }
+  ]
+
+
 
   egress_with_cidr_blocks = [
     {
@@ -2038,6 +2037,44 @@ module "sftp_server_sg" {
       description              = "Allow SSH From eastel jumphost"
       source_security_group_id = "sg-0247a03b9b047bddc"
     },
+  ]
+  egress_with_cidr_blocks = [{
+    from_port = 0, to_port = 0, protocol = "-1", description = "Allow all outbound traffic", cidr_blocks = "0.0.0.0/0"
+  }]
+}
+
+module "ecs_ec2_webserver_server_sg" {
+  source      = "terraform-aws-modules/security-group/aws"
+  version     = "~> 5.0"
+  description = "SG for webserver in ecs subnet"
+
+  name   = "${var.resource_name_prefix}-sg-ecs-ec2-webserver-server"
+  vpc_id = var.vpc_id
+  tags   = merge(var.tags, { Name = "${var.resource_name_prefix}-sg-ecs-ec2-webserver-server" })
+
+  ingress_with_source_security_group_id = [
+
+    {
+      from_port                = 0
+      to_port                  = 0
+      protocol                 = "-1"
+      description              = "Allow Everything From Self"
+      source_security_group_id = module.ecs_ec2_webserver_server_sg.security_group_id
+    },
+    {
+      from_port                = 80
+      to_port                  = 80
+      protocol                 = "tcp"
+      description              = "ALB HTTP"
+      source_security_group_id = module.external_alb_sg.security_group_id
+    },
+    # {
+    #   from_port                = 22
+    #   to_port                  = 22
+    #   protocol                 = "tcp"
+    #   description              = "Allow SSH From eastel jumphost"
+    #   source_security_group_id = "sg-0247a03b9b047bddc"
+    # },
   ]
   egress_with_cidr_blocks = [{
     from_port = 0, to_port = 0, protocol = "-1", description = "Allow all outbound traffic", cidr_blocks = "0.0.0.0/0"

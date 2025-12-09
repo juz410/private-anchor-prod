@@ -52,8 +52,8 @@ resource "aws_lb" "external_nlb" {
   }
 
   access_logs {
-    bucket = var.lb_access_logs_bucket
-    prefix = "NLB/${var.current_account_id}/${var.resource_name_prefix}-external-nlb"
+    bucket  = var.lb_access_logs_bucket
+    prefix  = "NLB/${var.current_account_id}/${var.resource_name_prefix}-external-nlb"
     enabled = true
   }
 }

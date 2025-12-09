@@ -77,6 +77,8 @@ fi
 EOF
 }
 
+#For new instance if got /data please use this line "disk": { "measurement": ["used_percent"], "metrics_collection_interval": 60, "resources": ["/"] }
+
 
 locals {
   prometheus_grafana_loki_servers = {
@@ -113,6 +115,10 @@ locals {
 
 
       user_data = "${local.base_userdata}\n${local.ebs_userdata}"
+      disk_targets = [
+        { path = "/", device = "nvme0n1p1", fstype = "xfs", label = "root" },
+        { path = "/data", device = "nvme1n1", fstype = "xfs", label = "data" },
+      ]
 
 
     }
@@ -148,6 +154,10 @@ locals {
       disable_api_termination = true
 
       user_data = "${local.base_userdata}\n${local.ebs_userdata}"
+      disk_targets = [
+        { path = "/", device = "nvme0n1p1", fstype = "xfs", label = "root" },
+        { path = "/data", device = "nvme1n1", fstype = "xfs", label = "data" },
+      ]
 
 
     }
@@ -185,6 +195,10 @@ locals {
       disable_api_termination = true
 
       user_data = "${local.base_userdata}\n${local.ebs_userdata}"
+      disk_targets = [
+        { path = "/", device = "nvme0n1p1", fstype = "xfs", label = "root" },
+        { path = "/data", device = "nvme1n1", fstype = "xfs", label = "data" },
+      ]
 
     }
 
@@ -219,6 +233,10 @@ locals {
       disable_api_termination = true
 
       user_data = "${local.base_userdata}\n${local.ebs_userdata}"
+      disk_targets = [
+        { path = "/", device = "nvme0n1p1", fstype = "xfs", label = "root" },
+        { path = "/data", device = "nvme1n1", fstype = "xfs", label = "data" },
+      ]
     }
   }
 
@@ -255,6 +273,10 @@ locals {
 
 
       user_data = "${local.base_userdata}\n${local.ebs_userdata}"
+      disk_targets = [
+        { path = "/", device = "nvme0n1p1", fstype = "xfs", label = "root" },
+        { path = "/data", device = "nvme1n1", fstype = "xfs", label = "data" },
+      ]
 
     }
 
@@ -290,6 +312,10 @@ locals {
 
 
       user_data = "${local.base_userdata}\n${local.ebs_userdata}"
+      disk_targets = [
+        { path = "/", device = "nvme0n1p1", fstype = "xfs", label = "root" },
+        { path = "/data", device = "nvme1n1", fstype = "xfs", label = "data" },
+      ]
     }
   }
 
@@ -390,6 +416,10 @@ locals {
 
 
       user_data = "${local.base_userdata}\n${local.ebs_userdata}"
+      disk_targets = [
+        { path = "/", device = "nvme0n1p1", fstype = "xfs", label = "root" },
+        { path = "/data", device = "nvme1n1", fstype = "xfs", label = "data" },
+      ]
 
     }
 
@@ -425,6 +455,10 @@ locals {
 
 
       user_data = "${local.base_userdata}\n${local.ebs_userdata}"
+      disk_targets = [
+        { path = "/", device = "nvme0n1p1", fstype = "xfs", label = "root" },
+        { path = "/data", device = "nvme1n1", fstype = "xfs", label = "data" },
+      ]
     }
   }
 
@@ -461,6 +495,10 @@ locals {
 
 
       user_data = "${local.base_userdata}\n${local.ebs_userdata}"
+      disk_targets = [
+        { path = "/", device = "nvme0n1p1", fstype = "xfs", label = "root" },
+        { path = "/data", device = "nvme1n1", fstype = "xfs", label = "data" },
+      ]
 
     }
 
@@ -496,6 +534,10 @@ locals {
 
 
       user_data = "${local.base_userdata}\n${local.ebs_userdata}"
+      disk_targets = [
+        { path = "/", device = "nvme0n1p1", fstype = "xfs", label = "root" },
+        { path = "/data", device = "nvme1n1", fstype = "xfs", label = "data" },
+      ]
     }
   }
 
@@ -532,6 +574,10 @@ locals {
 
 
       user_data = "${local.base_userdata}\n${local.ebs_userdata}"
+      disk_targets = [
+        { path = "/", device = "nvme0n1p1", fstype = "xfs", label = "root" },
+        { path = "/data", device = "nvme1n1", fstype = "xfs", label = "data" },
+      ]
 
     }
 
@@ -567,6 +613,10 @@ locals {
 
 
       user_data = "${local.base_userdata}\n${local.ebs_userdata}"
+      disk_targets = [
+        { path = "/", device = "nvme0n1p1", fstype = "xfs", label = "root" },
+        { path = "/data", device = "nvme1n1", fstype = "xfs", label = "data" },
+      ]
     }
   }
 
@@ -654,6 +704,10 @@ locals {
 
 
       user_data = "${local.base_userdata}\n${local.ebs_userdata}"
+      disk_targets = [
+        { path = "/", device = "nvme0n1p1", fstype = "xfs", label = "root" },
+        { path = "/data", device = "nvme1n1", fstype = "xfs", label = "data" },
+      ]
 
     }
 
@@ -689,6 +743,10 @@ locals {
 
 
       user_data = "${local.base_userdata}\n${local.ebs_userdata}"
+      disk_targets = [
+        { path = "/", device = "nvme0n1p1", fstype = "xfs", label = "root" },
+        { path = "/data", device = "nvme1n1", fstype = "xfs", label = "data" },
+      ]
     }
   }
 
@@ -725,6 +783,10 @@ locals {
 
 
       user_data = "${local.base_userdata}\n${local.ebs_userdata}"
+      disk_targets = [
+        { path = "/", device = "nvme0n1p1", fstype = "xfs", label = "root" },
+        { path = "/data", device = "nvme1n1", fstype = "xfs", label = "data" },
+      ]
 
     }
 
@@ -760,6 +822,10 @@ locals {
 
 
       user_data = "${local.base_userdata}\n${local.ebs_userdata}"
+      disk_targets = [
+        { path = "/", device = "nvme0n1p1", fstype = "xfs", label = "root" },
+        { path = "/data", device = "nvme1n1", fstype = "xfs", label = "data" },
+      ]
     }
   }
 
@@ -796,6 +862,10 @@ locals {
 
 
       user_data = "${local.base_userdata}\n${local.ebs_userdata}"
+      disk_targets = [
+        { path = "/", device = "nvme0n1p1", fstype = "xfs", label = "root" },
+        { path = "/data", device = "nvme1n1", fstype = "xfs", label = "data" },
+      ]
 
     }
 
@@ -831,6 +901,10 @@ locals {
 
 
       user_data = "${local.base_userdata}\n${local.ebs_userdata}"
+      disk_targets = [
+        { path = "/", device = "nvme0n1p1", fstype = "xfs", label = "root" },
+        { path = "/data", device = "nvme1n1", fstype = "xfs", label = "data" },
+      ]
     }
 
 
@@ -869,9 +943,95 @@ locals {
 
 
       user_data = "${local.base_userdata}\n${local.ebs_userdata}"
+      disk_targets = [
+        { path = "/", device = "nvme0n1p1", fstype = "xfs", label = "root" },
+        { path = "/data", device = "nvme1n1", fstype = "xfs", label = "data" },
+      ]
 
     }
 
+
+
+  }
+
+  ecs_ec2_webserver_servers = {
+    ecs_ec2_webserver_server_01 = {
+      name_suffix        = "ecs-ec2-web-srv-01"
+      ami                = data.aws_ami.amazon_linux.id
+      instance_type      = "c7i.large"
+      subnet_id          = module.vpc.private_kalsym_ecs_subnet_a_id
+      security_group_ids = [module.security_groups.ecs_ec2_webserver_server_sg_id]
+      root_volume_size   = 80
+      root_volume_iops   = 3000
+
+      ebs_block_devices = [
+        {
+          device_name           = "/dev/xvdb"
+          volume_size           = 120
+          volume_type           = "gp3"
+          iops                  = 3000
+          throughput            = 125
+          encrypted             = true
+          delete_on_termination = true
+        }
+      ]
+
+      backup_8hourly          = false
+      backup_12hourly         = false
+      backup_daily            = true
+      backup_weekly           = false
+      backup_monthly          = false
+      backup_yearly           = false
+      key_name                = "${data.aws_key_pair.instances_key_pair.key_name}"
+      disable_api_termination = true
+
+
+      user_data = "${local.base_userdata}\n${local.ebs_userdata}"
+      disk_targets = [
+        { path = "/", device = "nvme0n1p1", fstype = "xfs", label = "root" },
+        { path = "/data", device = "nvme1n1", fstype = "xfs", label = "data" },
+      ]
+
+    }
+
+    ecs_ec2_webserver_server_02 = {
+      name_suffix        = "ecs-ec2-web-srv-02"
+      ami                = data.aws_ami.amazon_linux.id
+      instance_type      = "c7i.large"
+      subnet_id          = module.vpc.private_kalsym_ecs_subnet_b_id
+      security_group_ids = [module.security_groups.ecs_ec2_webserver_server_sg_id]
+      root_volume_size   = 80
+      root_volume_iops   = 3000
+
+      ebs_block_devices = [
+        {
+          device_name           = "/dev/xvdb"
+          volume_size           = 120
+          volume_type           = "gp3"
+          iops                  = 3000
+          throughput            = 125
+          encrypted             = true
+          delete_on_termination = true
+        }
+      ]
+
+      backup_8hourly          = false
+      backup_12hourly         = false
+      backup_daily            = true
+      backup_weekly           = false
+      backup_monthly          = false
+      backup_yearly           = false
+      key_name                = "${data.aws_key_pair.instances_key_pair.key_name}"
+      disable_api_termination = true
+
+
+      user_data = "${local.base_userdata}\n${local.ebs_userdata}"
+      disk_targets = [
+        { path = "/", device = "nvme0n1p1", fstype = "xfs", label = "root" },
+        { path = "/data", device = "nvme1n1", fstype = "xfs", label = "data" },
+      ]
+
+    }
 
 
   }
@@ -918,7 +1078,8 @@ locals {
     local.scp_servers,
     local.ocs_servers,
     local.test_servers,
-    local.sftp_servers
+    local.sftp_servers,
+    local.ecs_ec2_webserver_servers
   )
 }
 

@@ -26,8 +26,8 @@ resource "aws_lb" "internal_alb" {
   drop_invalid_header_fields = true
 
   access_logs {
-    bucket = var.lb_access_logs_bucket
-    prefix = "ALB/${var.current_account_id}/${var.resource_name_prefix}-internal-alb"
+    bucket  = var.lb_access_logs_bucket
+    prefix  = "ALB/${var.current_account_id}/${var.resource_name_prefix}-internal-alb"
     enabled = true
   }
 }

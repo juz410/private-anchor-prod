@@ -130,6 +130,8 @@ module "endpoints" {
 
   resource_name_prefix = local.resource_name_prefix
 
+  gateway_route_table_ids = [module.vpc.private_route_table_id]
+
   tags = merge(
     local.standard_tags
   )
@@ -213,9 +215,9 @@ module "external_alb" {
     # all_in_one_server_id   = module.ec2_instances["all_in_one_server"].ec2_instance_id
   }
 
-  resource_name_prefix = local.resource_name_prefix
+  resource_name_prefix  = local.resource_name_prefix
   lb_access_logs_bucket = data.aws_s3_bucket.lb_access_logs_bucket.bucket
-  current_account_id = data.aws_caller_identity.current.account_id
+  current_account_id    = data.aws_caller_identity.current.account_id
 
   tags = merge(
     local.standard_tags
@@ -232,7 +234,7 @@ module "external_nlb" {
   resource_name_prefix = local.resource_name_prefix
 
   lb_access_logs_bucket = data.aws_s3_bucket.lb_access_logs_bucket.bucket
-  current_account_id = data.aws_caller_identity.current.account_id
+  current_account_id    = data.aws_caller_identity.current.account_id
 
   tags = merge(
     local.standard_tags
@@ -252,8 +254,8 @@ module "internal_alb" {
 
   resource_name_prefix = local.resource_name_prefix
 
-    lb_access_logs_bucket = data.aws_s3_bucket.lb_access_logs_bucket.bucket
-  current_account_id = data.aws_caller_identity.current.account_id
+  lb_access_logs_bucket = data.aws_s3_bucket.lb_access_logs_bucket.bucket
+  current_account_id    = data.aws_caller_identity.current.account_id
 
   tags = merge(
     local.standard_tags
@@ -421,4 +423,122 @@ module "mongodb_endpoint" {
   tags = merge(
     local.standard_tags
   )
+}
+
+module "sns_monitoring" {
+  source = "./modules/sns"
+  tags   = local.standard_tags
+
+  topics = {
+    # EC2
+    cpu = {
+      name          = "gap-cpu-topic"
+      display_name  = "${local.resource_name_prefix}-cpu-alarm"
+      subscriptions = []
+    }
+    memory = {
+      name          = "gap-memory-topic"
+      display_name  = "${local.resource_name_prefix}-memory-alarm"
+      subscriptions = []
+    }
+
+    disk = {
+      name          = "gap-disk-topic"
+      display_name  = "${local.resource_name_prefix}-low-disk-alarm"
+      subscriptions = []
+    }
+    #anchor extra ec2 alarm
+    statuscheck = {
+      name          = "gap-status-check-topic"
+      display_name  = "${local.resource_name_prefix}-status-check-alarm"
+      subscriptions = []
+    }
+
+    # RDS
+    rds_storage = {
+      name          = "gap-rds-storage-topic"
+      display_name  = "${local.resource_name_prefix}-rds-storage-alarm"
+      subscriptions = []
+    }
+
+    #anchor extra
+    # rds_cpu = {
+    #   name          = "gap-rds-cpu-topic"
+    #   display_name  = "${local.resource_name_prefix}-rds-cpu-alarm"
+    #   subscriptions = []
+    # }
+
+    # rds_connection = {
+    #   name          = "gap-rds-connection-topic"
+    #   display_name  = "${local.resource_name_prefix}-rds-connection-alarm"
+    #   subscriptions = []
+    # }
+
+    #ECS
+    
+  }
+}
+
+locals {
+  ec2_alarm_instances = {
+    for k, m in module.ec2_instances : k => {
+      instance_id   = m.ec2_instance_id
+      instance_name = m.name
+      instance_type = m.instance_type
+
+      # YOU must define these to match CWAgent’s actual disk dimensions.
+      # Example only (change to your real /apps, device, fstype):
+      disk_targets = try(local.ec2_servers[k].disk_targets, [{ path = "/", device = "nvme0n1p1", fstype = "xfs", label = "root" }])
+
+    }
+  }
+}
+
+module "ec2_standard_alarms" {
+  source               = "./modules/cw-alarms/cw-alarm-ec2"
+  resource_name_prefix = local.resource_name_prefix
+  instances            = local.ec2_alarm_instances
+
+  sns_topics = {
+    cpu         = module.sns_monitoring.topic_arns["cpu"]
+    memory      = module.sns_monitoring.topic_arns["memory"]
+    statuscheck = module.sns_monitoring.topic_arns["statuscheck"]
+    disk        = module.sns_monitoring.topic_arns["disk"]
+  }
+
+  tags = local.standard_tags
+}
+
+locals {
+  rds_alarm_instances = {
+    eastel_bss_db = {
+      db_identifier = module.multibyte_db_rds_postgresql.db_identifier
+      instance_name = module.multibyte_db_rds_postgresql.name
+    }
+    eastel_db = {
+      db_identifier = module.kalsym_db_rds_mysql.db_identifier
+      instance_name = module.kalsym_db_rds_mysql.name
+    }
+  }
+}
+
+module "rds_standard_alarms" {
+  source               = "./modules/cw-alarms/cw-alarm-rds"
+  resource_name_prefix = local.resource_name_prefix
+  instances            = local.rds_alarm_instances
+
+  sns_topics = {
+    storage    = module.sns_monitoring.topic_arns["rds_storage"]
+
+    #anchor extra
+    # cpu        = module.sns_monitoring.topic_arns["rds_cpu"]
+    # connection = module.sns_monitoring.topic_arns["rds_connection"]
+  }
+
+  # Tune these to your policy
+  cpu_thresholds             = [80, 90]
+  storage_free_gb_thresholds = [10, 5]
+  connection_thresholds      = [200, 400] # PUT REAL COUNTS HERE
+
+  tags = local.standard_tags
 }

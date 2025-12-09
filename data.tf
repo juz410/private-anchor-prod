@@ -29,7 +29,7 @@ data "aws_kms_key" "cloudwatch_logs_cmk" {
 }
 
 data "aws_s3_bucket" "lb_access_logs_bucket" {
-    bucket = "anchor-lb-logs-ap-southeast-5-328425459315"
+  bucket = "anchor-lb-logs-ap-southeast-5-328425459315"
 }
 
 data "aws_caller_identity" "current" {}

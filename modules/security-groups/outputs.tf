@@ -91,3 +91,7 @@ output "mongodb_endpoint_sg_id" {
 output "sftp_server_sg_id" {
   value = module.sftp_server_sg.security_group_id
 }
+
+output "ecs_ec2_webserver_server_sg_id" {
+  value = module.ecs_ec2_webserver_server_sg.security_group_id
+}
