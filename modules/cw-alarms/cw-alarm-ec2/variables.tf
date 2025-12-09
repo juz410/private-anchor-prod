@@ -23,8 +23,11 @@ variable "sns_topics" {
   type = object({
     cpu         = string
     memory      = string
-    statuscheck = string
     disk        = string
+
+    #anchor extra
+    statuscheck = string
+    
   })
 }
 
