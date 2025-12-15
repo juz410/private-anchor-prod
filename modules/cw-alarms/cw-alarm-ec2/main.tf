@@ -169,7 +169,6 @@ resource "aws_cloudwatch_metric_alarm" "disk_left_gb" {
 }
 
 
-#Anchor extra alarm for ec2
 
 resource "aws_cloudwatch_metric_alarm" "statuscheck_either" {
   for_each = local.status_defs

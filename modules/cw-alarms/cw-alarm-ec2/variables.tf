@@ -25,7 +25,7 @@ variable "sns_topics" {
     memory      = string
     disk        = string
 
-    #anchor extra
+
     statuscheck = string
     
   })

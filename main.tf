@@ -455,7 +455,6 @@ module "sns_monitoring" {
       display_name  = "${local.resource_name_prefix}-low-disk-alarm"
       subscriptions = []
     }
-    #anchor extra ec2 alarm
     statuscheck = {
       name          = "gap-status-check-topic"
       display_name  = "${local.resource_name_prefix}-status-check-alarm"
