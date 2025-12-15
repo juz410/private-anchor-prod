@@ -675,7 +675,7 @@ locals {
     smsc_server_01 = {
       name_suffix        = "smsc-srv-01"
       ami                = data.aws_ami.amazon_linux.id
-      instance_type      = "c7i.xlarge"
+      instance_type      = "m7i.xlarge"
       subnet_id          = module.vpc.private_multibyte_subnet_a_id
       security_group_ids = [module.security_groups.smsc_server_sg_id]
       root_volume_size   = 100
@@ -714,7 +714,7 @@ locals {
     smsc_server_02 = {
       name_suffix        = "smsc-srv-02"
       ami                = data.aws_ami.amazon_linux.id
-      instance_type      = "c7i.xlarge"
+      instance_type      = "m7i.xlarge"
       subnet_id          = module.vpc.private_multibyte_subnet_b_id
       security_group_ids = [module.security_groups.smsc_server_sg_id]
       root_volume_size   = 100

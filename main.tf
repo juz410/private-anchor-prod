@@ -148,6 +148,14 @@ module "iam" {
   tags = merge(
     local.standard_tags
   )
+
+  #aws backup alarm 
+  backup_sns_topic_arns = {
+    success = module.sns_monitoring.topic_arns["backup_success"]
+    failed  = module.sns_monitoring.topic_arns["backup_failed"]
+    expired = module.sns_monitoring.topic_arns["backup_expired"]
+  }
+
 }
 
 ###############################################
@@ -476,6 +484,26 @@ module "sns_monitoring" {
 
     #ECS
     
+
+    # --- AWS Backup ---
+    backup_success = {
+      name          = "gap-backup-success-topic"
+      display_name  = "${local.resource_name_prefix}-backup-success"
+      subscriptions = [{
+      # protocol = "email"
+      # endpoint = "kokfeeng.tan@g-asiapac.com"
+    }]
+    }
+    backup_failed = {
+      name          = "gap-backup-failed-topic"
+      display_name  = "${local.resource_name_prefix}-backup-failed"
+      subscriptions = []
+    }
+    backup_expired = {
+      name          = "gap-backup-expired-topic"
+      display_name  = "${local.resource_name_prefix}-backup-expired"
+      subscriptions = []
+    }
   }
 }
 
@@ -539,6 +567,54 @@ module "rds_standard_alarms" {
   cpu_thresholds             = [80, 90]
   storage_free_gb_thresholds = [10, 5]
   connection_thresholds      = [200, 400] # PUT REAL COUNTS HERE
+
+  tags = local.standard_tags
+}
+
+
+##----- AWS Backup Alarm ------
+
+locals {
+  # EC2 resources protected by AWS Backup
+  backup_resources_ec2 = {
+    for k, m in module.ec2_instances : k => {
+      arn  = m.arn              # make sure ec2_instances module outputs this
+      name = m.name             # "anchor-prod-ussd-svr-01" etc.
+      type = "EC2"
+    }
+  }
+
+  # RDS resources
+  backup_resources_rds = {
+    eastel_bss_db = {
+      arn  = module.multibyte_db_rds_postgresql.arn
+      name = module.multibyte_db_rds_postgresql.name
+      type = "RDS"
+    }
+    eastel_db = {
+      arn  = module.kalsym_db_rds_mysql.arn
+      name = module.kalsym_db_rds_mysql.name
+      type = "RDS"
+    }
+  }
+
+  backup_resources = merge(
+    local.backup_resources_ec2,
+    local.backup_resources_rds
+  )
+}
+
+
+module "backup_alarms" {
+  source               = "./modules/cw-alarms/cw-alarm-backup"
+  resource_name_prefix = local.resource_name_prefix
+  resources            = local.backup_resources
+
+  sns_topics = {
+    success = module.sns_monitoring.topic_arns["backup_success"]
+    failed  = module.sns_monitoring.topic_arns["backup_failed"]
+    expired = module.sns_monitoring.topic_arns["backup_expired"]
+  }
 
   tags = local.standard_tags
 }

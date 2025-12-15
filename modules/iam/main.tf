@@ -35,3 +35,28 @@ resource "aws_iam_instance_profile" "ec2_instance_profile" {
   name = "${var.resource_name_prefix}-ec2-instance-profile"
   role = aws_iam_role.ec2_instance_role.name
 }
+
+
+#aws backup alarm
+resource "aws_sns_topic_policy" "backup" {
+  for_each = var.backup_sns_topic_arns
+  # each.key   = "success" | "failed" | "expired"
+  # each.value = topic ARN
+
+  arn = each.value
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid    = "AllowEventBridgeToPublish"
+        Effect = "Allow"
+        Principal = {
+          Service = "events.amazonaws.com"
+        }
+        Action   = "sns:Publish"
+        Resource = each.value  # <-- single resource per policy (no list)
+      }
+    ]
+  })
+}
