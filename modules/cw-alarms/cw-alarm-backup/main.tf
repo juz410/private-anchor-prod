@@ -134,3 +134,6 @@ resource "aws_cloudwatch_event_target" "backup_expired_sns" {
   target_id = "sns"
   arn       = local.expired_map[each.key].topic_arn
 }
+
+
+#anchor extra alarm

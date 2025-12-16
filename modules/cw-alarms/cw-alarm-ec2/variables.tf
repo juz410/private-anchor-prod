@@ -24,9 +24,11 @@ variable "sns_topics" {
     cpu         = string
     memory      = string
     disk        = string
-
-
     statuscheck = string
+
+    #anchor extra
+    instance_state = string
+
     
   })
 }

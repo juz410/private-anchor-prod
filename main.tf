@@ -150,10 +150,11 @@ module "iam" {
   )
 
   #aws backup alarm 
-  backup_sns_topic_arns = {
+  event_bridge_sns_topic_arns = {
     success = module.sns_monitoring.topic_arns["backup_success"]
     failed  = module.sns_monitoring.topic_arns["backup_failed"]
     expired = module.sns_monitoring.topic_arns["backup_expired"]
+    instance_state = module.sns_monitoring.topic_arns["instance_state"]
   }
 
 }
@@ -433,6 +434,9 @@ module "mongodb_endpoint" {
   )
 }
 
+
+
+#------------------ ALARM ----------------------#
 module "sns_monitoring" {
   source = "./modules/sns"
   tags   = local.standard_tags
@@ -459,6 +463,16 @@ module "sns_monitoring" {
       name          = "gap-status-check-topic"
       display_name  = "${local.resource_name_prefix}-status-check-alarm"
       subscriptions = []
+    }
+
+    #ec2_instance Anchor extra
+    instance_state = {
+      name          = "gap-instance-state-topic"
+      display_name  = "${local.resource_name_prefix}-instancestate-alarm"
+      subscriptions = [{
+      protocol = "email"
+      endpoint = "kokfeeng.tan@g-asiapac.com"
+    }]
     }
 
     # RDS
@@ -489,8 +503,8 @@ module "sns_monitoring" {
       name          = "gap-backup-success-topic"
       display_name  = "${local.resource_name_prefix}-backup-success"
       subscriptions = [{
-      # protocol = "email"
-      # endpoint = "kokfeeng.tan@g-asiapac.com"
+      protocol = "email"
+      endpoint = "kokfeeng.tan@g-asiapac.com"
     }]
     }
     backup_failed = {
@@ -531,6 +545,8 @@ module "ec2_standard_alarms" {
     memory      = module.sns_monitoring.topic_arns["memory"]
     statuscheck = module.sns_monitoring.topic_arns["statuscheck"]
     disk        = module.sns_monitoring.topic_arns["disk"]
+    instance_state = module.sns_monitoring.topic_arns["instance_state"]
+
   }
 
   tags = local.standard_tags

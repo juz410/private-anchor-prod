@@ -38,11 +38,9 @@ resource "aws_iam_instance_profile" "ec2_instance_profile" {
 
 
 #aws backup alarm
-resource "aws_sns_topic_policy" "backup" {
-  for_each = var.backup_sns_topic_arns
-  # each.key   = "success" | "failed" | "expired"
-  # each.value = topic ARN
-
+resource "aws_sns_topic_policy" "event_bridge_to_sns_policy" {
+  for_each = var.event_bridge_sns_topic_arns
+  
   arn = each.value
 
   policy = jsonencode({
