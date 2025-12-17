@@ -20,7 +20,7 @@ SNS_TOPIC_MEM_ARN="arn:aws:sns:ap-southeast-5:328425459315:gap-servicememoryutil
 # 3) Thresholds / timings
 CPU_THRESHOLDS=(80 90)       # %
 MEM_THRESHOLDS=(80 90)       # %
-PENDING_TASK_THRESHOLD=1     # ≥ this many pending tasks
+PENDING_TASK_THRESHOLD=10     # ≥ this many pending tasks
 PERIOD_SECONDS=300           # 5 minutes, matches your spreadsheet
 EVALUATION_PERIODS=1
 TREAT_MISSING="missing"      # same as your Terraform alarms
