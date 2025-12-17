@@ -142,7 +142,7 @@ for SERVICE_ARN in ${SERVICE_ARNS}; do
     create_alarm \
       "${RUNNING_ALARM_NAME}" \
       "${RUNNING_DESC}" \
-      "AWS/ECS" \
+      "ECS/ContainerInsights" \
       "RunningTaskCount" \
       "Minimum" \
       "LessThanThreshold" \
@@ -163,7 +163,7 @@ for SERVICE_ARN in ${SERVICE_ARNS}; do
   create_alarm \
     "${PENDING_ALARM_NAME}" \
     "${PENDING_DESC}" \
-    "AWS/ECS" \
+    "ECS/ContainerInsights" \
     "PendingTaskCount" \
     "Maximum" \
     "GreaterThanOrEqualToThreshold" \
