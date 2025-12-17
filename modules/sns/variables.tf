@@ -11,7 +11,17 @@ variable "topics" {
   }))
 }
 
+
+
 variable "tags" {
   type    = map(string)
   default = {}
+}
+
+
+#If kms key is required
+variable "kms_key_arn" {
+  description = "Optional KMS key ARN for encrypting SNS topics"
+  type        = string
+  default     = ""
 }

@@ -442,6 +442,7 @@ module "mongodb_endpoint" {
 module "sns_monitoring" {
   source = "./modules/sns"
   tags   = local.standard_tags
+  kms_key_arn = data.aws_kms_key.sns_cmk.arn
 
   topics = {
     # EC2
@@ -477,13 +478,6 @@ module "sns_monitoring" {
     }]
     }
 
-    # RDS
-    rds_storage = {
-      name          = "gap-rds-storage-topic"
-      display_name  = "${local.resource_name_prefix}-rds-storage-alarm"
-      subscriptions = []
-    }
-
   # --- RDS standard ---
     rds_storage = {
       name          = "gap-rds-storage-topic"
@@ -513,28 +507,28 @@ module "sns_monitoring" {
     ecs_running_task = {
       # from sheet: GAP_RunningTaskCount_topic
       name          = "gap-runningtaskcount-topic"
-      display_name  = "${local.resource_name_prefix}-RunningTaskCount-Alarm"
+      display_name  = "${local.resource_name_prefix}-running-task-count-alarm"
       subscriptions = []
     }
 
     ecs_pending_task = {
       # GAP_PendingTaskCount_topic
       name          = "gap-pendingtaskcount-topic"
-      display_name  = "${local.resource_name_prefix}-PendingTaskCount-Alarm"
+      display_name  = "${local.resource_name_prefix}-pending-task-count-alarm"
       subscriptions = []
     }
 
     ecs_service_cpu = {
       # GAP_ServiceCPUUtilization_topic
       name          = "gap-servicecpuutilization-topic"
-      display_name  = "${local.resource_name_prefix}-ServiceCPUUtilization-Alarm"
+      display_name  = "${local.resource_name_prefix}-service-cpu-utilization-alarm"
       subscriptions = []
     }
 
     ecs_service_memory = {
       # GAP_ServiceMemoryUtilization_Topic
       name          = "gap-servicememoryutilization-topic"
-      display_name  = "${local.resource_name_prefix}-ServiceMemoryUtilization-Alarm"
+      display_name  = "${local.resource_name_prefix}-service-memory-utilization-alarm"
       subscriptions = []
     }
     
@@ -562,31 +556,31 @@ module "sns_monitoring" {
     # NLB extra alarms
     nlb_tcp_client_reset = {
       name          = "gap-nlb-tcptargetresetcount-topic"
-      display_name  = "${local.resource_name_prefix}-TCPClientResetCount-alarm"
+      display_name  = "${local.resource_name_prefix}-tcp-target-reset-count-alarm"
       subscriptions = []
     }
     nlb_tcp_elb_reset = {
       name          = "gap-nlb-tcpelbresetcount-topic"
-      display_name  = "${local.resource_name_prefix}-TCPELBResetCount-alarm"
+      display_name  = "${local.resource_name_prefix}-tcp-elb-reset-count-alarm"
       subscriptions = []
     }
 
     #ALB extra alarms
     alb_healthyhost = {
       name          = "gap-alb-healthyhostcount-topic"
-      display_name  = "${local.resource_name_prefix}-HealthyHostCount-Alarm"
+      display_name  = "${local.resource_name_prefix}-healthy-host-count-alarm"
       subscriptions = [] # or add email subscriptions like your other topics
     }
 
     alb_target_5xx = {
       name          = "gap-alb-httpcode-target-5xx-topic"
-      display_name  = "${local.resource_name_prefix}-HTTPCodeTarget5XXCount-Alarm"
+      display_name  = "${local.resource_name_prefix}-HTTPCodeTarget5XXCount-alarm"
       subscriptions = []
     }
 
     alb_elb_5xx = {
       name          = "gap-alb-httpcode-elb-5xx-topic"
-      display_name  = "${local.resource_name_prefix}-HTTPCodeELB5XXCount-Alarm"
+      display_name  = "${local.resource_name_prefix}-HTTPCodeELB5XXCount-alarm"
       subscriptions = []
     }
   }

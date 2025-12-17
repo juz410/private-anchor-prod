@@ -27,6 +27,9 @@ data "aws_kms_key" "secret_manager_cmk" {
 data "aws_kms_key" "cloudwatch_logs_cmk" {
   key_id = "alias/anchor-prod-cloudwatch-logs-kms-001"
 }
+data "aws_kms_key" "sns_cmk" {
+  key_id = "alias/anchor-prod-sns-kms-001"
+}
 
 data "aws_s3_bucket" "lb_access_logs_bucket" {
   bucket = "anchor-lb-logs-ap-southeast-5-328425459315"
