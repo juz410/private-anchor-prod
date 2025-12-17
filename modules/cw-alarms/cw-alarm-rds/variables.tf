@@ -5,18 +5,22 @@ variable "resource_name_prefix" {
 variable "instances" {
   description = "Map of RDS instances to alarm on"
   type = map(object({
-    db_identifier = string # used in dimension DBInstanceIdentifier
-    instance_name = string # used in alarm naming (your convention)
+    db_identifier        = string
+    instance_name        = string
+    conn_warn_threshold  = optional(number) # e.g. 550
+    conn_crit_threshold  = optional(number) # e.g. 620
   }))
 }
+
 
 variable "sns_topics" {
   type = object({
     storage    = string
 
     #anchor extra
-    # cpu        = string
-    # connection = string
+    cpu        = string
+    connection = string
+    event      = string
   })
 }
 
@@ -32,12 +36,6 @@ variable "cpu_thresholds" {
 }
 
 
-
-variable "connection_thresholds" {
-  description = "DatabaseConnections is a COUNT. Put real numbers here (e.g., [200, 400])."
-  type        = list(number)
-  default     = [200, 400]
-}
 
 variable "connection_statistic" {
   description = "Average or Maximum are common"

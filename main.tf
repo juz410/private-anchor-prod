@@ -155,6 +155,8 @@ module "iam" {
     failed  = module.sns_monitoring.topic_arns["backup_failed"]
     expired = module.sns_monitoring.topic_arns["backup_expired"]
     instance_state = module.sns_monitoring.topic_arns["instance_state"]
+        rds_events        = module.sns_monitoring.topic_arns["rds_event"]
+
   }
 
 }
@@ -482,20 +484,59 @@ module "sns_monitoring" {
       subscriptions = []
     }
 
-    #anchor extra
-    # rds_cpu = {
-    #   name          = "gap-rds-cpu-topic"
-    #   display_name  = "${local.resource_name_prefix}-rds-cpu-alarm"
-    #   subscriptions = []
-    # }
+  # --- RDS standard ---
+    rds_storage = {
+      name          = "gap-rds-storage-topic"
+      display_name  = "${local.resource_name_prefix}-rds-storage-alarm"
+      subscriptions = []
+    }
 
-    # rds_connection = {
-    #   name          = "gap-rds-connection-topic"
-    #   display_name  = "${local.resource_name_prefix}-rds-connection-alarm"
-    #   subscriptions = []
-    # }
+    # --- RDS extra ---
+    rds_cpu = {
+      name          = "gap-rds-cpu-topic"
+      display_name  = "${local.resource_name_prefix}-rds-cpu-alarm"
+      subscriptions = []
+    }
+    rds_connection = {
+      name          = "gap-rds-connection-topic"
+      display_name  = "${local.resource_name_prefix}-rds-connection-alarm"
+      subscriptions = []
+    }
+    rds_event = {
+      name          = "gap-rds-event-topic"
+      display_name  = "${local.resource_name_prefix}-rds-event-alarm"
+      subscriptions = []
+    }
 
     #ECS
+
+    ecs_running_task = {
+      # from sheet: GAP_RunningTaskCount_topic
+      name          = "gap-runningtaskcount-topic"
+      display_name  = "${local.resource_name_prefix}-RunningTaskCount-Alarm"
+      subscriptions = []
+    }
+
+    ecs_pending_task = {
+      # GAP_PendingTaskCount_topic
+      name          = "gap-pendingtaskcount-topic"
+      display_name  = "${local.resource_name_prefix}-PendingTaskCount-Alarm"
+      subscriptions = []
+    }
+
+    ecs_service_cpu = {
+      # GAP_ServiceCPUUtilization_topic
+      name          = "gap-servicecpuutilization-topic"
+      display_name  = "${local.resource_name_prefix}-ServiceCPUUtilization-Alarm"
+      subscriptions = []
+    }
+
+    ecs_service_memory = {
+      # GAP_ServiceMemoryUtilization_Topic
+      name          = "gap-servicememoryutilization-topic"
+      display_name  = "${local.resource_name_prefix}-ServiceMemoryUtilization-Alarm"
+      subscriptions = []
+    }
     
 
     # --- AWS Backup ---
@@ -515,6 +556,37 @@ module "sns_monitoring" {
     backup_expired = {
       name          = "gap-backup-expired-topic"
       display_name  = "${local.resource_name_prefix}-backup-expired"
+      subscriptions = []
+    }
+
+    # NLB extra alarms
+    nlb_tcp_client_reset = {
+      name          = "gap-nlb-tcptargetresetcount-topic"
+      display_name  = "${local.resource_name_prefix}-TCPClientResetCount-alarm"
+      subscriptions = []
+    }
+    nlb_tcp_elb_reset = {
+      name          = "gap-nlb-tcpelbresetcount-topic"
+      display_name  = "${local.resource_name_prefix}-TCPELBResetCount-alarm"
+      subscriptions = []
+    }
+
+    #ALB extra alarms
+    alb_healthyhost = {
+      name          = "gap-alb-healthyhostcount-topic"
+      display_name  = "${local.resource_name_prefix}-HealthyHostCount-Alarm"
+      subscriptions = [] # or add email subscriptions like your other topics
+    }
+
+    alb_target_5xx = {
+      name          = "gap-alb-httpcode-target-5xx-topic"
+      display_name  = "${local.resource_name_prefix}-HTTPCodeTarget5XXCount-Alarm"
+      subscriptions = []
+    }
+
+    alb_elb_5xx = {
+      name          = "gap-alb-httpcode-elb-5xx-topic"
+      display_name  = "${local.resource_name_prefix}-HTTPCodeELB5XXCount-Alarm"
       subscriptions = []
     }
   }
@@ -555,12 +627,16 @@ module "ec2_standard_alarms" {
 locals {
   rds_alarm_instances = {
     eastel_bss_db = {
-      db_identifier = module.multibyte_db_rds_postgresql.db_identifier
-      instance_name = module.multibyte_db_rds_postgresql.name
+      db_identifier       = module.multibyte_db_rds_postgresql.db_identifier
+      instance_name       = module.multibyte_db_rds_postgresql.name
+      conn_warn_threshold = 1450
+      conn_crit_threshold = 1650
     }
     eastel_db = {
-      db_identifier = module.kalsym_db_rds_mysql.db_identifier
-      instance_name = module.kalsym_db_rds_mysql.name
+      db_identifier       = module.kalsym_db_rds_mysql.db_identifier
+      instance_name       = module.kalsym_db_rds_mysql.name
+      conn_warn_threshold = 550
+      conn_crit_threshold = 620
     }
   }
 }
@@ -572,19 +648,17 @@ module "rds_standard_alarms" {
 
   sns_topics = {
     storage    = module.sns_monitoring.topic_arns["rds_storage"]
-
-    #anchor extra
-    # cpu        = module.sns_monitoring.topic_arns["rds_cpu"]
-    # connection = module.sns_monitoring.topic_arns["rds_connection"]
+    cpu        = module.sns_monitoring.topic_arns["rds_cpu"]
+    connection = module.sns_monitoring.topic_arns["rds_connection"]
+    event      = module.sns_monitoring.topic_arns["rds_event"]
   }
 
-  # Tune these to your policy
   cpu_thresholds             = [80, 90]
   storage_free_gb_thresholds = [10, 5]
-  connection_thresholds      = [200, 400] # PUT REAL COUNTS HERE
 
   tags = local.standard_tags
 }
+
 
 
 ##----- AWS Backup Alarm ------
@@ -630,6 +704,73 @@ module "backup_alarms" {
     failed  = module.sns_monitoring.topic_arns["backup_failed"]
     expired = module.sns_monitoring.topic_arns["backup_expired"]
   }
+
+  tags = local.standard_tags
+}
+
+
+#=============== NLB ALARM ==================
+
+locals {
+  nlb_alarm_targets = {
+    external = {
+      lb_dim  = module.external_nlb.nlb_arn_suffix  
+      lb_name = module.external_nlb.nlb_name       
+    }
+  }
+}
+
+module "nlb_alarms" {
+  source               = "./modules/cw-alarms/cw-alarm-nlb"
+  resource_name_prefix = local.resource_name_prefix
+  nlbs                 = local.nlb_alarm_targets
+
+  sns_topics = {
+    tcp_client_reset = module.sns_monitoring.topic_arns["nlb_tcp_client_reset"]
+    tcp_elb_reset    = module.sns_monitoring.topic_arns["nlb_tcp_elb_reset"]
+  }
+
+  # Optional overrides 
+  tcp_client_reset_threshold = 20
+  tcp_elb_reset_threshold    = 20
+  period_seconds             = 300
+  evaluation_periods         = 1
+
+  tags = local.standard_tags
+}
+
+#============= ALB Alarm ============
+locals {
+  alb_alarm_lbs = {
+    external = {
+      lb_arn_suffix = module.external_alb.alb_arn_suffix
+      name          = module.external_alb.name    # usually "${local.resource_name_prefix}-external-alb"
+    }
+    internal = {
+      lb_arn_suffix = module.internal_alb.alb_arn_suffix
+      name          = module.internal_alb.name
+    }
+  }
+}
+
+module "alb_standard_alarms" {
+  source               = "./modules/cw-alarms/cw-alarm-alb"
+  resource_name_prefix = local.resource_name_prefix
+  load_balancers       = local.alb_alarm_lbs
+
+  sns_topics = {
+    healthy_host = module.sns_monitoring.topic_arns["alb_healthyhost"]
+    target_5xx   = module.sns_monitoring.topic_arns["alb_target_5xx"]
+    elb_5xx      = module.sns_monitoring.topic_arns["alb_elb_5xx"]
+  }
+
+  # 5-minute critical alarms, matching your sheet
+  period_seconds              = 300
+  evaluation_periods          = 1
+  healthy_min_hosts           = 1
+  target_5xx_count_threshold  = 5
+  elb_5xx_count_threshold     = 5
+  treat_missing_data          = "missing"
 
   tags = local.standard_tags
 }

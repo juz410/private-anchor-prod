@@ -17,6 +17,7 @@ variable "event_bridge_sns_topic_arns" {
     failed  = string
     expired = string
     instance_state = string
+    rds_events = string
   })
 }
 
