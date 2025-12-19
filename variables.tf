@@ -105,3 +105,9 @@ variable "owner" {
 # variable "cost_center" {
 #   type = string
 # }
+
+variable "ec2_state_notification_instance_keys" {
+  description = "List of EC2 server keys (from local.ec2_servers_data) to include in state-change notifications; empty means all"
+  type        = list(string)
+  default     = []
+}

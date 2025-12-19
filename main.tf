@@ -611,8 +611,6 @@ module "ec2_standard_alarms" {
     memory      = module.sns_monitoring.topic_arns["memory"]
     statuscheck = module.sns_monitoring.topic_arns["statuscheck"]
     disk        = module.sns_monitoring.topic_arns["disk"]
-    instance_state = module.sns_monitoring.topic_arns["instance_state"]
-
   }
 
   tags = local.standard_tags
@@ -653,54 +651,165 @@ module "rds_standard_alarms" {
   tags = local.standard_tags
 }
 
+###############################################
+# Lambda SNS Publisher for Backup and EC2 State Changes
+###############################################
+module "sns_publisher_shared" {
+  source = "./modules/lambda-sns-publisher"
 
-
-##----- AWS Backup Alarm ------
-
-locals {
-  # EC2 resources protected by AWS Backup
-  backup_resources_ec2 = {
-    for k, m in module.ec2_instances : k => {
-      arn  = m.arn              # make sure ec2_instances module outputs this
-      name = m.name             # "anchor-prod-ussd-svr-01" etc.
-      type = "EC2"
-    }
-  }
-
-  # RDS resources
-  backup_resources_rds = {
-    eastel_bss_db = {
-      arn  = module.multibyte_db_rds_postgresql.arn
-      name = module.multibyte_db_rds_postgresql.name
-      type = "RDS"
-    }
-    eastel_db = {
-      arn  = module.kalsym_db_rds_mysql.arn
-      name = module.kalsym_db_rds_mysql.name
-      type = "RDS"
-    }
-  }
-
-  backup_resources = merge(
-    local.backup_resources_ec2,
-    local.backup_resources_rds
-  )
-}
-
-
-module "backup_alarms" {
-  source               = "./modules/cw-alarms/cw-alarm-backup"
   resource_name_prefix = local.resource_name_prefix
-  resources            = local.backup_resources
+  project_id = var.project_id
+  environment = var.environment
 
-  sns_topics = {
-    success = module.sns_monitoring.topic_arns["backup_success"]
-    failed  = module.sns_monitoring.topic_arns["backup_failed"]
-    expired = module.sns_monitoring.topic_arns["backup_expired"]
+  topic_map = {
+    success    = module.sns_monitoring.topic_arns["backup_success"]
+    failed     = module.sns_monitoring.topic_arns["backup_failed"]
+    expired    = module.sns_monitoring.topic_arns["backup_expired"]
+    ec2_state  = module.sns_monitoring.topic_arns["instance_state"]
   }
+
+  awsbackup_state_topic_mapping = {
+    COMPLETED = "success"
+    FAILED    = "failed"
+    EXPIRED   = "expired"
+  }
+
+  ec2_state_topic_label   = "ec2_state"
+  ec2_state_topic_mapping = {
+    pending        = "ec2_state"
+    running        = "ec2_state"
+    stopping       = "ec2_state"
+    stopped        = "ec2_state"
+    "shutting-down" = "ec2_state"
+    terminated     = "ec2_state"
+  }
+
+  # Optional: override templates here if desired, otherwise defaults in the Python code (see lambda-sns-publisher/lambda/index.py) will be used
+  # Please use "_fmt" behind the variables related to time for time formatting in the Lambda code, e,g. {startTime_fmt}, {completionTime_fmt}
+
+    subject_template     = "[BACKUP - {state}] : Project {project_id}-{environment} at {startTime_date}"
+  #   message_template     = <<EOT
+  # [Backup {state}]
+  # Vault: {vault}
+  # Resource: ({resourceType}) {resourceName}
+  # Resource ARN: {resourceArn}
+  # Plan: {planName} (Rule: {ruleName})
+  # Backup Job ID: {jobId}
+  # Start: {startTime_fmt}
+  # End: {completionTime_fmt}
+  # Category: {messageCategory}
+
+
+  # JSON formatted details: {detail_json}
+  # EOT
+  # ec2_subject_template = "[EC2 {state}] Instance {instanceId}"
+  # ec2_message_template = "..."
 
   tags = local.standard_tags
 }
+
+###############################################
+# EC2 State Change EventBridge Alarms using the shared SNS Publisher Lambda
+###############################################
+locals {
+  ec2_state_notification_instance_ids = [
+    for key, mod in module.ec2_instances : mod.ec2_instance_id
+    if try(local.ec2_servers[key].include_state_notifications, false)
+      || (length(var.ec2_state_notification_instance_keys) == 0 ? false : contains(var.ec2_state_notification_instance_keys, key))
+  ]
+}
+
+module "ec2_state_notifications" {
+  source               = "./modules/cw-alarms/cw-ec2-state-change-alarm"
+  resource_name_prefix = local.resource_name_prefix
+
+  # If true, create the rule even when no instance IDs are provided (will match all instances). Defaults to false to avoid catching everything when nothing opted in.
+  enable_when_no_instances = false
+  instance_ids = local.ec2_state_notification_instance_ids
+
+  lambda_function_arn  = module.sns_publisher_shared.function_arn
+  lambda_function_name = module.sns_publisher_shared.function_name
+
+  # Defaults cover all states; override if needed
+  # ec2_state_values = ["running", "stopped", ...]
+
+  tags = local.standard_tags
+}
+
+###############################################
+# AWS Backups EventBridge Alarms using the shared SNS Publisher Lambda
+###############################################
+locals {
+  backup_alarm_vaults = {
+    default = {
+      vault_name   = "aws-controltower-central-backupvault-1759117549246"
+      display_name = "aws-controltower-central-backupvault-1759117549246"
+    }
+  #   second_vault = {
+  #     vault_name   = "secondary-backup"
+  #     display_name = "secondary-backup-displayname
+  # }
+  }
+}
+
+module "backup_standard_alarms" {
+  source               = "./modules/cw-alarms/cw-alarm-backup"
+  resource_name_prefix = local.resource_name_prefix
+  vaults               = local.backup_alarm_vaults
+
+  lambda_function_arn  = module.sns_publisher_shared.function_arn
+  lambda_function_name = module.sns_publisher_shared.function_name
+
+  tags = local.standard_tags
+}
+
+
+# ##----- AWS Backup Alarm ------
+
+# locals {
+#   # EC2 resources protected by AWS Backup
+#   backup_resources_ec2 = {
+#     for k, m in module.ec2_instances : k => {
+#       arn  = m.arn              # make sure ec2_instances module outputs this
+#       name = m.name             # "anchor-prod-ussd-svr-01" etc.
+#       type = "EC2"
+#     }
+#   }
+
+#   # RDS resources
+#   backup_resources_rds = {
+#     eastel_bss_db = {
+#       arn  = module.multibyte_db_rds_postgresql.arn
+#       name = module.multibyte_db_rds_postgresql.name
+#       type = "RDS"
+#     }
+#     eastel_db = {
+#       arn  = module.kalsym_db_rds_mysql.arn
+#       name = module.kalsym_db_rds_mysql.name
+#       type = "RDS"
+#     }
+#   }
+
+#   backup_resources = merge(
+#     local.backup_resources_ec2,
+#     local.backup_resources_rds
+#   )
+# }
+
+
+# module "backup_alarms" {
+#   source               = "./modules/cw-alarms/cw-alarm-backup"
+#   resource_name_prefix = local.resource_name_prefix
+#   resources            = local.backup_resources
+
+#   sns_topics = {
+#     success = module.sns_monitoring.topic_arns["backup_success"]
+#     failed  = module.sns_monitoring.topic_arns["backup_failed"]
+#     expired = module.sns_monitoring.topic_arns["backup_expired"]
+#   }
+
+#   tags = local.standard_tags
+# }
 
 
 #=============== NLB ALARM ==================

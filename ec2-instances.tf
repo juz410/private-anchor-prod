@@ -89,6 +89,9 @@ locals {
       subnet_id          = module.vpc.private_kalsym_app_subnet_a_id
       security_group_ids = [module.security_groups.prometheus_grafana_loki_server_sg_id]
 
+      # FOR EC2 STATE CHANGE NOTIFICATIONS, REQUIRES CW-EC2-STATE-CHANGE-ALARM MODULE AND LAMBDA SETUP MODULE IF ENABLED!!!
+      include_state_notifications = true
+      
       root_volume_size = 100
       root_volume_iops = 3000
 
@@ -129,6 +132,10 @@ locals {
       instance_type      = "c7i.xlarge"
       subnet_id          = module.vpc.private_kalsym_app_subnet_b_id
       security_group_ids = [module.security_groups.prometheus_grafana_loki_server_sg_id]
+
+      # FOR EC2 STATE CHANGE NOTIFICATIONS, REQUIRES CW-EC2-STATE-CHANGE-ALARM MODULE AND LAMBDA SETUP MODULE IF ENABLED!!!
+      include_state_notifications = true
+
       uroot_volume_size  = 100
       root_volume_iops   = 3000
 
@@ -170,6 +177,10 @@ locals {
       instance_type      = "c7i.xlarge"
       subnet_id          = module.vpc.private_kalsym_app_subnet_a_id
       security_group_ids = [module.security_groups.ussd_server_sg_id]
+
+      # FOR EC2 STATE CHANGE NOTIFICATIONS, REQUIRES CW-EC2-STATE-CHANGE-ALARM MODULE AND LAMBDA SETUP MODULE IF ENABLED!!!
+      include_state_notifications = true
+
       root_volume_size   = 80
       root_volume_iops   = 3000
 
@@ -208,6 +219,10 @@ locals {
       instance_type      = "c7i.xlarge"
       subnet_id          = module.vpc.private_kalsym_app_subnet_b_id
       security_group_ids = [module.security_groups.ussd_server_sg_id]
+
+      # FOR EC2 STATE CHANGE NOTIFICATIONS, REQUIRES CW-EC2-STATE-CHANGE-ALARM MODULE AND LAMBDA SETUP MODULE IF ENABLED!!!
+      include_state_notifications = true
+
       root_volume_size   = 80
       root_volume_iops   = 3000
 
@@ -247,6 +262,10 @@ locals {
       instance_type      = "c7i.2xlarge"
       subnet_id          = module.vpc.private_kalsym_app_subnet_a_id
       security_group_ids = [module.security_groups.mcn_ivr_server_sg_id]
+
+      # FOR EC2 STATE CHANGE NOTIFICATIONS, REQUIRES CW-EC2-STATE-CHANGE-ALARM MODULE AND LAMBDA SETUP MODULE IF ENABLED!!!
+      include_state_notifications = true
+
       root_volume_size   = 80
       root_volume_iops   = 3000
 
@@ -286,6 +305,10 @@ locals {
       instance_type      = "c7i.2xlarge"
       subnet_id          = module.vpc.private_kalsym_app_subnet_b_id
       security_group_ids = [module.security_groups.mcn_ivr_server_sg_id]
+
+      # FOR EC2 STATE CHANGE NOTIFICATIONS, REQUIRES CW-EC2-STATE-CHANGE-ALARM MODULE AND LAMBDA SETUP MODULE IF ENABLED!!!
+      include_state_notifications = true
+
       root_volume_size   = 80
       root_volume_iops   = 3000
 
@@ -390,6 +413,9 @@ locals {
       subnet_id          = module.vpc.private_multibyte_subnet_a_id
       security_group_ids = [module.security_groups.iot_web_frontend_server_sg_id]
 
+      # FOR EC2 STATE CHANGE NOTIFICATIONS, REQUIRES CW-EC2-STATE-CHANGE-ALARM MODULE AND LAMBDA SETUP MODULE IF ENABLED!!!
+      include_state_notifications = true
+
       root_volume_size = 80
       root_volume_iops = 3000
 
@@ -429,6 +455,10 @@ locals {
       instance_type      = "c7i.large"
       subnet_id          = module.vpc.private_multibyte_subnet_b_id
       security_group_ids = [module.security_groups.iot_web_frontend_server_sg_id]
+
+      # FOR EC2 STATE CHANGE NOTIFICATIONS, REQUIRES CW-EC2-STATE-CHANGE-ALARM MODULE AND LAMBDA SETUP MODULE IF ENABLED!!!
+      include_state_notifications = true
+
       root_volume_size   = 80
       root_volume_iops   = 3000
 
@@ -469,6 +499,10 @@ locals {
       instance_type      = "m7i.large"
       subnet_id          = module.vpc.private_multibyte_subnet_a_id
       security_group_ids = [module.security_groups.iot_web_backend_server_sg_id]
+
+      # FOR EC2 STATE CHANGE NOTIFICATIONS, REQUIRES CW-EC2-STATE-CHANGE-ALARM MODULE AND LAMBDA SETUP MODULE IF ENABLED!!!
+      include_state_notifications = true
+
       root_volume_size   = 100
       root_volume_iops   = 3000
 
@@ -508,6 +542,10 @@ locals {
       instance_type      = "m7i.large"
       subnet_id          = module.vpc.private_multibyte_subnet_b_id
       security_group_ids = [module.security_groups.iot_web_backend_server_sg_id]
+
+      # FOR EC2 STATE CHANGE NOTIFICATIONS, REQUIRES CW-EC2-STATE-CHANGE-ALARM MODULE AND LAMBDA SETUP MODULE IF ENABLED!!!
+      include_state_notifications = true
+
       root_volume_size   = 100
       root_volume_iops   = 3000
 
@@ -548,6 +586,10 @@ locals {
       instance_type      = "c7i.large"
       subnet_id          = module.vpc.private_multibyte_subnet_a_id
       security_group_ids = [module.security_groups.middleware_api_server_sg_id]
+
+      # FOR EC2 STATE CHANGE NOTIFICATIONS, REQUIRES CW-EC2-STATE-CHANGE-ALARM MODULE AND LAMBDA SETUP MODULE IF ENABLED!!!
+      include_state_notifications = true
+
       root_volume_size   = 80
       root_volume_iops   = 3000
 
@@ -587,6 +629,10 @@ locals {
       instance_type      = "c7i.large"
       subnet_id          = module.vpc.private_multibyte_subnet_b_id
       security_group_ids = [module.security_groups.middleware_api_server_sg_id]
+
+      # FOR EC2 STATE CHANGE NOTIFICATIONS, REQUIRES CW-EC2-STATE-CHANGE-ALARM MODULE AND LAMBDA SETUP MODULE IF ENABLED!!!
+      include_state_notifications = true
+
       root_volume_size   = 80
       root_volume_iops   = 3000
 
@@ -627,6 +673,10 @@ locals {
       instance_type      = "c7i.large"
       subnet_id          = module.hk_vpc.private_dra_subnet_a_id
       security_group_ids = [module.security_groups.dra_server_sg_id]
+
+      # FOR EC2 STATE CHANGE NOTIFICATIONS, REQUIRES CW-EC2-STATE-CHANGE-ALARM MODULE AND LAMBDA SETUP MODULE IF ENABLED!!!
+      include_state_notifications = true
+
       root_volume_size   = 50
       root_volume_iops   = 3000
 
@@ -652,6 +702,10 @@ locals {
       instance_type      = "c7i.large"
       subnet_id          = module.hk_vpc.private_dra_subnet_b_id
       security_group_ids = [module.security_groups.dra_server_sg_id]
+
+      # FOR EC2 STATE CHANGE NOTIFICATIONS, REQUIRES CW-EC2-STATE-CHANGE-ALARM MODULE AND LAMBDA SETUP MODULE IF ENABLED!!!
+      include_state_notifications = true
+
       root_volume_size   = 50
       root_volume_iops   = 3000
 
@@ -678,6 +732,10 @@ locals {
       instance_type      = "m7i.xlarge"
       subnet_id          = module.vpc.private_multibyte_subnet_a_id
       security_group_ids = [module.security_groups.smsc_server_sg_id]
+
+      # FOR EC2 STATE CHANGE NOTIFICATIONS, REQUIRES CW-EC2-STATE-CHANGE-ALARM MODULE AND LAMBDA SETUP MODULE IF ENABLED!!!
+      include_state_notifications = true
+
       root_volume_size   = 100
       root_volume_iops   = 3000
 
@@ -717,6 +775,10 @@ locals {
       instance_type      = "m7i.xlarge"
       subnet_id          = module.vpc.private_multibyte_subnet_b_id
       security_group_ids = [module.security_groups.smsc_server_sg_id]
+
+      # FOR EC2 STATE CHANGE NOTIFICATIONS, REQUIRES CW-EC2-STATE-CHANGE-ALARM MODULE AND LAMBDA SETUP MODULE IF ENABLED!!!
+      include_state_notifications = true
+
       root_volume_size   = 100
       root_volume_iops   = 3000
 
@@ -757,6 +819,10 @@ locals {
       instance_type      = "c7i.xlarge"
       subnet_id          = module.vpc.private_multibyte_subnet_a_id
       security_group_ids = [module.security_groups.scp_server_sg_id]
+
+      # FOR EC2 STATE CHANGE NOTIFICATIONS, REQUIRES CW-EC2-STATE-CHANGE-ALARM MODULE AND LAMBDA SETUP MODULE IF ENABLED!!!
+      include_state_notifications = true
+
       root_volume_size   = 100
       root_volume_iops   = 3000
 
@@ -796,6 +862,10 @@ locals {
       instance_type      = "c7i.xlarge"
       subnet_id          = module.vpc.private_multibyte_subnet_b_id
       security_group_ids = [module.security_groups.scp_server_sg_id]
+
+      # FOR EC2 STATE CHANGE NOTIFICATIONS, REQUIRES CW-EC2-STATE-CHANGE-ALARM MODULE AND LAMBDA SETUP MODULE IF ENABLED!!!
+      include_state_notifications = true
+
       root_volume_size   = 100
       root_volume_iops   = 3000
 
@@ -836,6 +906,10 @@ locals {
       instance_type      = "c7i.xlarge"
       subnet_id          = module.vpc.private_multibyte_subnet_a_id
       security_group_ids = [module.security_groups.ocs_server_sg_id]
+
+      # FOR EC2 STATE CHANGE NOTIFICATIONS, REQUIRES CW-EC2-STATE-CHANGE-ALARM MODULE AND LAMBDA SETUP MODULE IF ENABLED!!!
+      include_state_notifications = true
+
       root_volume_size   = 100
       root_volume_iops   = 3000
 
@@ -875,6 +949,10 @@ locals {
       instance_type      = "c7i.xlarge"
       subnet_id          = module.vpc.private_multibyte_subnet_b_id
       security_group_ids = [module.security_groups.ocs_server_sg_id]
+
+      # FOR EC2 STATE CHANGE NOTIFICATIONS, REQUIRES CW-EC2-STATE-CHANGE-ALARM MODULE AND LAMBDA SETUP MODULE IF ENABLED!!!
+      include_state_notifications = true
+
       root_volume_size   = 100
       root_volume_iops   = 3000
 
@@ -917,6 +995,10 @@ locals {
       instance_type      = "t3.medium"
       subnet_id          = module.vpc.private_multibyte_subnet_a_id
       security_group_ids = [module.security_groups.sftp_server_sg_id]
+
+      # FOR EC2 STATE CHANGE NOTIFICATIONS, REQUIRES CW-EC2-STATE-CHANGE-ALARM MODULE AND LAMBDA SETUP MODULE IF ENABLED!!!
+      include_state_notifications = true
+
       root_volume_size   = 20
       root_volume_iops   = 3000
 
@@ -961,6 +1043,10 @@ locals {
       instance_type      = "c7i.large"
       subnet_id          = module.vpc.private_kalsym_ecs_subnet_a_id
       security_group_ids = [module.security_groups.ecs_ec2_webserver_server_sg_id]
+
+      # FOR EC2 STATE CHANGE NOTIFICATIONS, REQUIRES CW-EC2-STATE-CHANGE-ALARM MODULE AND LAMBDA SETUP MODULE IF ENABLED!!!
+      include_state_notifications = true
+
       root_volume_size   = 80
       root_volume_iops   = 3000
 
@@ -1000,6 +1086,10 @@ locals {
       instance_type      = "c7i.large"
       subnet_id          = module.vpc.private_kalsym_ecs_subnet_b_id
       security_group_ids = [module.security_groups.ecs_ec2_webserver_server_sg_id]
+
+      # FOR EC2 STATE CHANGE NOTIFICATIONS, REQUIRES CW-EC2-STATE-CHANGE-ALARM MODULE AND LAMBDA SETUP MODULE IF ENABLED!!!
+      include_state_notifications = true
+
       root_volume_size   = 80
       root_volume_iops   = 3000
 
@@ -1085,7 +1175,7 @@ locals {
 
 
 
-#FULL EXAMPLE
+# FULL EXAMPLE
 # locals {
 #   ec2_servers = {
 #     uat_server = {
@@ -1094,6 +1184,9 @@ locals {
 #       instance_type      = "c7i.xlarge"
 #       subnet_id          = module.vpc.private_subnet_a_id
 #       security_group_ids = [module.security_groups.uat_server_sg_id]
+
+      # # FOR EC2 STATE CHANGE NOTIFICATIONS, REQUIRES CW-EC2-STATE-CHANGE-ALARM MODULE AND LAMBDA SETUP MODULE IF ENABLED!!!
+      # include_state_notifications = true
 
 #       # Add one extra EBS volume
 #       ebs_block_devices = [

@@ -82,18 +82,18 @@ locals {
   disk_gb_map = { for x in local.disk_gb_defs : x.key => x }
 
 
-# anchor extra
-  # ---------- Instance state-change events (EventBridge -> SNS) ----------
-  inst_state_defs = [
-    for inst_key, inst in var.instances : {
-      key         = "${inst_key}_statechange"
-      rule_name   = substr("${var.resource_name_prefix}-${inst.instance_name}-instancestate-change", 0, 64)
-      description = "EC2 instance state change for ${inst.instance_name} (${inst.instance_id})"
-      instance_id = inst.instance_id
-      topic_arn   = var.sns_topics.instance_state
-    }
-  ]
-  inst_state_map = { for d in local.inst_state_defs : d.key => d }
+# # anchor extra
+#   # ---------- Instance state-change events (EventBridge -> SNS) ----------
+#   inst_state_defs = [
+#     for inst_key, inst in var.instances : {
+#       key         = "${inst_key}_statechange"
+#       rule_name   = substr("${var.resource_name_prefix}-${inst.instance_name}-instancestate-change", 0, 64)
+#       description = "EC2 instance state change for ${inst.instance_name} (${inst.instance_id})"
+#       instance_id = inst.instance_id
+#       topic_arn   = var.sns_topics.instance_state
+#     }
+#   ]
+#   inst_state_map = { for d in local.inst_state_defs : d.key => d }
 }
 
 resource "aws_cloudwatch_metric_alarm" "cpu" {
@@ -210,30 +210,30 @@ resource "aws_cloudwatch_metric_alarm" "statuscheck_either" {
 
 # =============== Instance State Change (EventBridge) ====================
 
-resource "aws_cloudwatch_event_rule" "instance_state_change" {
-  for_each = local.inst_state_map
+# resource "aws_cloudwatch_event_rule" "instance_state_change" {
+#   for_each = local.inst_state_map
 
-  name        = each.value.rule_name
-  description = each.value.description
+#   name        = each.value.rule_name
+#   description = each.value.description
 
-  # Fire on ANY state change for that specific instance
-  event_pattern = jsonencode({
-    "source"      : ["aws.ec2"],
-    "detail-type" : ["EC2 Instance State-change Notification"],
-    "detail" : {
-      "instance-id" : [each.value.instance_id]
-      # If later you want only certain states:
-      # "state" : ["running", "stopped", "stopping", "pending", "shutting-down", "terminated"]
-    }
-  })
+#   # Fire on ANY state change for that specific instance
+#   event_pattern = jsonencode({
+#     "source"      : ["aws.ec2"],
+#     "detail-type" : ["EC2 Instance State-change Notification"],
+#     "detail" : {
+#       "instance-id" : [each.value.instance_id]
+#       # If later you want only certain states:
+#       # "state" : ["running", "stopped", "stopping", "pending", "shutting-down", "terminated"]
+#     }
+#   })
 
-  tags = var.tags
-}
+#   tags = var.tags
+# }
 
-resource "aws_cloudwatch_event_target" "instance_state_change_sns" {
-  for_each = aws_cloudwatch_event_rule.instance_state_change
+# resource "aws_cloudwatch_event_target" "instance_state_change_sns" {
+#   for_each = aws_cloudwatch_event_rule.instance_state_change
 
-  rule      = each.value.name
-  target_id = "sns"
-  arn       = local.inst_state_map[each.key].topic_arn
-}
+#   rule      = each.value.name
+#   target_id = "sns"
+#   arn       = local.inst_state_map[each.key].topic_arn
+# }
