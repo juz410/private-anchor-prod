@@ -1,6 +1,7 @@
 import json
 import os
 from datetime import datetime, timedelta, timezone
+from zoneinfo import ZoneInfo
 from typing import Any, Dict, Tuple
 
 import boto3
@@ -47,32 +48,50 @@ def _tz_label(offset_minutes: int) -> str:
     return f"UTC{sign}{hours}"
 
 
-def _format_iso(ts: str | None, offset_minutes: int, label: str | None) -> str | None:
+def _format_iso(ts: str | None, tzinfo: timezone, label: str | None) -> str | None:
     if not ts:
         return ts
     try:
         # Normalize 'Z' to '+00:00' for fromisoformat
         norm = ts.replace("Z", "+00:00")
         dt = datetime.fromisoformat(norm)
-        target = dt.astimezone(timezone(timedelta(minutes=offset_minutes)))
-        tzlabel = label or _tz_label(offset_minutes)
+        target = dt.astimezone(tzinfo)
+        tzlabel = label
         return target.strftime(f"%Y-%m-%d, %H:%M ({tzlabel})")
     except Exception:
         return ts
 
 
-def _split_iso(ts: str | None, offset_minutes: int, label: str | None) -> Tuple[str | None, str | None]:
+def _split_iso(ts: str | None, tzinfo: timezone, label: str | None) -> Tuple[str | None, str | None]:
     """Return separate date and time strings for the given ISO timestamp."""
     if not ts:
         return ts, ts
     try:
         norm = ts.replace("Z", "+00:00")
         dt = datetime.fromisoformat(norm)
-        target = dt.astimezone(timezone(timedelta(minutes=offset_minutes)))
-        tzlabel = label or _tz_label(offset_minutes)
+        target = dt.astimezone(tzinfo)
+        tzlabel = label
         return target.strftime("%Y-%m-%d"), target.strftime(f"%H:%M ({tzlabel})")
     except Exception:
         return ts, ts
+
+
+def _timezone_from_env() -> Tuple[timezone, str]:
+    """Resolve target timezone from IANA name first, else offset."""
+    tz_name = os.environ.get("TIMEZONE_NAME")
+    offset_minutes = int(os.environ.get("TIMEZONE_OFFSET_MINUTES", "0"))
+    label = os.environ.get("TIMEZONE_LABEL")
+
+    if tz_name:
+        try:
+            tzinfo = ZoneInfo(tz_name)
+            return tzinfo, label or tz_name
+        except Exception:
+            # Fall back to offset if the name is invalid or unavailable
+            pass
+
+    tzinfo = timezone(timedelta(minutes=offset_minutes))
+    return tzinfo, label or _tz_label(offset_minutes)
 
 
 def _build_backup_context(event: Dict[str, Any]) -> SafeDict:
@@ -134,8 +153,7 @@ def _resolve_event_kind(event: Dict[str, Any]) -> Tuple[str, str | None, str | N
 def handler(event: Dict[str, Any], _context: Any) -> Dict[str, Any]:
     kind, _, _ = _resolve_event_kind(event)
 
-    offset_minutes = int(os.environ.get("TIMEZONE_OFFSET_MINUTES", "0"))
-    tz_label = os.environ.get("TIMEZONE_LABEL") or _tz_label(offset_minutes)
+    tzinfo, tz_label = _timezone_from_env()
 
     topic_map = json.loads(os.environ.get("SNS_TOPIC_MAP", "{}"))
 
@@ -162,8 +180,8 @@ def handler(event: Dict[str, Any], _context: Any) -> Dict[str, Any]:
         state_mapping = json.loads(os.environ.get("EC2_STATE_TOPIC_MAPPING", "{}"))
         default_label = os.environ.get("EC2_STATE_TOPIC_LABEL") or os.environ.get("DEFAULT_TOPIC_LABEL")
         ctx = _build_ec2_context(event)
-        ctx["time_fmt"] = _format_iso(ctx.get("time"), offset_minutes, tz_label)
-        ctx["time_date"], ctx["time_time"] = _split_iso(ctx.get("time"), offset_minutes, tz_label)
+        ctx["time_fmt"] = _format_iso(ctx.get("time"), tzinfo, tz_label)
+        ctx["time_date"], ctx["time_time"] = _split_iso(ctx.get("time"), tzinfo, tz_label)
     else:
         subject_template = _get_template("SUBJECT_TEMPLATE", "[BACKUP - {state}] : Project {project_id}-{environment} at {startTime_date}")
         message_template = _get_template(
@@ -188,12 +206,12 @@ def handler(event: Dict[str, Any], _context: Any) -> Dict[str, Any]:
         state_mapping = json.loads(os.environ.get("AWSBACKUP_STATE_TOPIC_MAPPING", "{}"))
         default_label = os.environ.get("DEFAULT_TOPIC_LABEL")
         ctx = _build_backup_context(event)
-        ctx["time_fmt"] = _format_iso(ctx.get("time"), offset_minutes, tz_label)
-        ctx["time_date"], ctx["time_time"] = _split_iso(ctx.get("time"), offset_minutes, tz_label)
-        ctx["startTime_fmt"] = _format_iso(ctx.get("startTime"), offset_minutes, tz_label)
-        ctx["startTime_date"], ctx["startTime_time"] = _split_iso(ctx.get("startTime"), offset_minutes, tz_label)
-        ctx["completionTime_fmt"] = _format_iso(ctx.get("completionTime"), offset_minutes, tz_label)
-        ctx["completionTime_date"], ctx["completionTime_time"] = _split_iso(ctx.get("completionTime"), offset_minutes, tz_label)
+        ctx["time_fmt"] = _format_iso(ctx.get("time"), tzinfo, tz_label)
+        ctx["time_date"], ctx["time_time"] = _split_iso(ctx.get("time"), tzinfo, tz_label)
+        ctx["startTime_fmt"] = _format_iso(ctx.get("startTime"), tzinfo, tz_label)
+        ctx["startTime_date"], ctx["startTime_time"] = _split_iso(ctx.get("startTime"), tzinfo, tz_label)
+        ctx["completionTime_fmt"] = _format_iso(ctx.get("completionTime"), tzinfo, tz_label)
+        ctx["completionTime_date"], ctx["completionTime_time"] = _split_iso(ctx.get("completionTime"), tzinfo, tz_label)
 
     state = ctx.get("state")
     topic_arn = _resolve_topic_arn(state, topic_map, state_mapping, default_label)

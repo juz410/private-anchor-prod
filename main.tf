@@ -661,6 +661,12 @@ module "sns_publisher_shared" {
   project_id = var.project_id
   environment = var.environment
 
+  # Additional environment variables to pass to the Lambda function
+  lambda_additional_env = {
+    # Timezone offset in minutes, e.g. UTC+8 = 480, UTC-5 = -300, default is -480 (UTC-8 for Malaysia time). Adjust as needed in here or in the variable.
+    TIMEZONE_OFFSET_MINUTES = tostring(var.timezone_offset_minutes)
+  }
+
   topic_map = {
     success    = module.sns_monitoring.topic_arns["backup_success"]
     failed     = module.sns_monitoring.topic_arns["backup_failed"]
@@ -686,8 +692,11 @@ module "sns_publisher_shared" {
 
   # Optional: override templates here if desired, otherwise defaults in the Python code (see lambda-sns-publisher/lambda/index.py) will be used
   # Please use "_fmt" behind the variables related to time for time formatting in the Lambda code, e,g. {startTime_fmt}, {completionTime_fmt}
+  # Please use "_date" behind the variables related to date for date formatting in the Lambda code, e,g. {startTime_date}
 
+  # I have uncommented subject_template for AWS Backup as an example, you can do the same for EC2 if desired.
     subject_template     = "[BACKUP - {state}] : Project {project_id}-{environment} at {startTime_date}"
+
   #   message_template     = <<EOT
   # [Backup {state}]
   # Vault: {vault}
@@ -711,6 +720,8 @@ module "sns_publisher_shared" {
 ###############################################
 # EC2 State Change EventBridge Alarms using the shared SNS Publisher Lambda
 ###############################################
+
+# PREREQUESITE: Please set the variable "include_state_notifications = true" in local.ec2_servers for each instance you want to monitor, set to false or omit to skip.
 locals {
   ec2_state_notification_instance_ids = [
     for key, mod in module.ec2_instances : mod.ec2_instance_id
@@ -725,6 +736,7 @@ module "ec2_state_notifications" {
 
   # If true, create the rule even when no instance IDs are provided (will match all instances). Defaults to false to avoid catching everything when nothing opted in.
   enable_when_no_instances = false
+
   instance_ids = local.ec2_state_notification_instance_ids
 
   lambda_function_arn  = module.sns_publisher_shared.function_arn
@@ -745,9 +757,10 @@ locals {
       vault_name   = "aws-controltower-central-backupvault-1759117549246"
       display_name = "aws-controltower-central-backupvault-1759117549246"
     }
+  # Add more vaults here if needed.
   #   second_vault = {
   #     vault_name   = "secondary-backup"
-  #     display_name = "secondary-backup-displayname
+  #     display_name = "secondary-backup-displayname"
   # }
   }
 }

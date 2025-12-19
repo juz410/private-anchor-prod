@@ -111,3 +111,9 @@ variable "ec2_state_notification_instance_keys" {
   type        = list(string)
   default     = []
 }
+
+variable "timezone_offset_minutes" {
+  description = "Timezone offset from UTC in minutes (e.g. -240 for UTC-4)"
+  type        = number
+  default     = -480
+}
