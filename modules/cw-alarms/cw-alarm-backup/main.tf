@@ -1,129 +1,86 @@
 locals {
-  vault_configs = {
-    for key, vault in var.vaults :
-    key => {
-      vault_name = vault.vault_name
-      label      = try(vault.display_name, vault.vault_name)
-    }
-  }
-
+  vault_names    = [for v in var.vaults : v.vault_name]
   event_bus_name = coalesce(var.event_bus_name, "default")
-
-  success_rules = {
-    for key, vault in local.vault_configs :
-    key => {
-      name        = substr("${var.resource_name_prefix}-${vault.label}-backup-success", 0, 64)
-      description = "Backup job completed for vault ${vault.vault_name}"
-      event_pattern = jsonencode({
-        "source"      : ["aws.backup"],
-        "detail-type" : ["Backup Job State Change"],
-        "detail"      : {
-          "backupVaultName" : [vault.vault_name],
-          "state"           : ["COMPLETED"]
-        }
-      })
-    }
-  }
-
-  failed_rules = {
-    for key, vault in local.vault_configs :
-    key => {
-      name        = substr("${var.resource_name_prefix}-${vault.label}-backup-failed", 0, 64)
-      description = "Backup job failed for vault ${vault.vault_name}"
-      event_pattern = jsonencode({
-        "source"      : ["aws.backup"],
-        "detail-type" : ["Backup Job State Change"],
-        "detail"      : {
-          "backupVaultName" : [vault.vault_name],
-          "state"           : ["FAILED"]
-        }
-      })
-    }
-  }
-
-  expired_rules = {
-    for key, vault in local.vault_configs :
-    key => {
-      name        = substr("${var.resource_name_prefix}-${vault.label}-backup-expired", 0, 64)
-      description = "Backup job expired for vault ${vault.vault_name}"
-      event_pattern = jsonencode({
-        "source"      : ["aws.backup"],
-        "detail-type" : ["Backup Job State Change"],
-        "detail"      : {
-          "backupVaultName" : [vault.vault_name],
-          "state"           : ["EXPIRED"]
-        }
-      })
-    }
-  }
 }
 
 resource "aws_cloudwatch_event_rule" "success" {
-  for_each            = local.success_rules
-  name                = each.value.name
-  description         = each.value.description
-  event_pattern       = each.value.event_pattern
-  event_bus_name      = local.event_bus_name
-  tags                = var.tags
+  name          = substr("${var.resource_name_prefix}-backup-success", 0, 64)
+  description   = "Backup job completed for configured vaults"
+  event_pattern = jsonencode({
+    "source"      : ["aws.backup"],
+    "detail-type" : ["Backup Job State Change"],
+    "detail"      : {
+      "backupVaultName" : local.vault_names,
+      "state"           : ["COMPLETED"]
+    }
+  })
+  event_bus_name = local.event_bus_name
+  tags           = var.tags
 }
 
 resource "aws_cloudwatch_event_rule" "failed" {
-  for_each            = local.failed_rules
-  name                = each.value.name
-  description         = each.value.description
-  event_pattern       = each.value.event_pattern
-  event_bus_name      = local.event_bus_name
-  tags                = var.tags
+  name          = substr("${var.resource_name_prefix}-backup-failed", 0, 64)
+  description   = "Backup job failed for configured vaults"
+  event_pattern = jsonencode({
+    "source"      : ["aws.backup"],
+    "detail-type" : ["Backup Job State Change"],
+    "detail"      : {
+      "backupVaultName" : local.vault_names,
+      "state"           : ["FAILED"]
+    }
+  })
+  event_bus_name = local.event_bus_name
+  tags           = var.tags
 }
 
 resource "aws_cloudwatch_event_rule" "expired" {
-  for_each            = local.expired_rules
-  name                = each.value.name
-  description         = each.value.description
-  event_pattern       = each.value.event_pattern
-  event_bus_name      = local.event_bus_name
-  tags                = var.tags
+  name          = substr("${var.resource_name_prefix}-backup-expired", 0, 64)
+  description   = "Backup job expired for configured vaults"
+  event_pattern = jsonencode({
+    "source"      : ["aws.backup"],
+    "detail-type" : ["Backup Job State Change"],
+    "detail"      : {
+      "backupVaultName" : local.vault_names,
+      "state"           : ["EXPIRED"]
+    }
+  })
+  event_bus_name = local.event_bus_name
+  tags           = var.tags
 }
 
 resource "aws_cloudwatch_event_target" "success" {
-  for_each = aws_cloudwatch_event_rule.success
-
-  rule          = each.value.name
-  target_id     = "lambda-backup-publisher"
-  arn           = var.lambda_function_arn
+  rule           = aws_cloudwatch_event_rule.success.name
+  target_id      = "lambda-backup-publisher"
+  arn            = var.lambda_function_arn
   event_bus_name = local.event_bus_name
 }
 
 resource "aws_cloudwatch_event_target" "failed" {
-  for_each = aws_cloudwatch_event_rule.failed
-
-  rule          = each.value.name
-  target_id     = "lambda-backup-publisher"
-  arn           = var.lambda_function_arn
+  rule           = aws_cloudwatch_event_rule.failed.name
+  target_id      = "lambda-backup-publisher"
+  arn            = var.lambda_function_arn
   event_bus_name = local.event_bus_name
 }
 
 resource "aws_cloudwatch_event_target" "expired" {
-  for_each = aws_cloudwatch_event_rule.expired
-
-  rule          = each.value.name
-  target_id     = "lambda-backup-publisher"
-  arn           = var.lambda_function_arn
+  rule           = aws_cloudwatch_event_rule.expired.name
+  target_id      = "lambda-backup-publisher"
+  arn            = var.lambda_function_arn
   event_bus_name = local.event_bus_name
 }
 
 resource "aws_lambda_permission" "allow_eventbridge" {
-  for_each = merge(
-    { for k, v in aws_cloudwatch_event_rule.success : "success-${k}" => v },
-    { for k, v in aws_cloudwatch_event_rule.failed  : "failed-${k}"  => v },
-    { for k, v in aws_cloudwatch_event_rule.expired : "expired-${k}" => v },
-  )
+  for_each = {
+    success = aws_cloudwatch_event_rule.success.arn
+    failed  = aws_cloudwatch_event_rule.failed.arn
+    expired = aws_cloudwatch_event_rule.expired.arn
+  }
 
-  statement_id  = "AllowExecutionFromEvents-${each.value.name}"
+  statement_id  = "AllowExecutionFromEvents-${each.key}"
   action        = "lambda:InvokeFunction"
   function_name = var.lambda_function_name
   principal     = "events.amazonaws.com"
-  source_arn    = each.value.arn
+  source_arn    = each.value
 }
 
 # locals {
