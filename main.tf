@@ -663,7 +663,7 @@ module "sns_publisher_shared" {
 
   # Additional environment variables to pass to the Lambda function
   lambda_additional_env = {
-    # Timezone offset in minutes, e.g. UTC+8 = 480, UTC-5 = -300, default is -480 (UTC-8 for Malaysia time). Adjust as needed in here or in the variable.
+    # Timezone offset in minutes, e.g. UTC+8 = 480, UTC-5 = -300, default is 480 (UTC+8 for Malaysia time). Adjust as needed in here or in the variable.
     TIMEZONE_OFFSET_MINUTES = tostring(var.timezone_offset_minutes)
   }
 
