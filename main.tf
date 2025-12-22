@@ -754,8 +754,8 @@ module "ec2_state_notifications" {
 locals {
   backup_alarm_vaults = {
     default = {
-      vault_name   = "aws-controltower-central-backupvault-1759117549246"
-      display_name = "aws-controltower-central-backupvault-1759117549246"
+      vault_name   = "anchor-primary-vault"
+      display_name = "anchor-primary-vault"
     }
   # Add more vaults here if needed.
   #   second_vault = {
