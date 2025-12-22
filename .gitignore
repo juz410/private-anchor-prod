@@ -51,3 +51,4 @@ ssm_ssh_config
 tfplan
 !/cw-alarms-bash-scripts/**/*.sh
 .DS_Store
+*.zip
