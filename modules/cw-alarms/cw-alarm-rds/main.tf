@@ -29,27 +29,27 @@ locals {
 
   # ---------- Connections alarms (COUNT, anchor extra) ----------
   conn_defs = flatten([
-  for db_key, db in var.instances : [
-    # 80% warning level
-    for pair in [
-      {
-        thr   = db.conn_warn_threshold
-        label = 80
-      },
-      {
-        thr   = db.conn_crit_threshold
-        label = 90
+    for db_key, db in var.instances : [
+      # 80% warning level
+      for pair in [
+        {
+          thr   = db.conn_warn_threshold
+          label = 80
+        },
+        {
+          thr   = db.conn_crit_threshold
+          label = 90
+        }
+        ] : {
+        key        = "${db_key}_conn_${pair.label}"
+        alarm_name = substr("${var.resource_name_prefix}-${db.instance_name}-connections-high-${pair.label}%", 0, 255)
+        threshold  = pair.thr
+        topic_arn  = var.sns_topics.connection
+        dimensions = { DBInstanceIdentifier = db.db_identifier }
       }
-    ] : {
-      key        = "${db_key}_conn_${pair.label}"
-      alarm_name = substr("${var.resource_name_prefix}-${db.instance_name}-connections-high-${pair.label}%", 0, 255)
-      threshold  = pair.thr
-      topic_arn  = var.sns_topics.connection
-      dimensions = { DBInstanceIdentifier = db.db_identifier }
-    }
-    if pair.thr != null
-  ]
-])
+      if pair.thr != null
+    ]
+  ])
 
   conn_map = { for d in local.conn_defs : d.key => d }
 
@@ -141,11 +141,11 @@ resource "aws_cloudwatch_event_rule" "rds_events" {
 
   # Focus on DB instance failure/failover events for that DB
   event_pattern = jsonencode({
-    "source"      : ["aws.rds"],
+    "source" : ["aws.rds"],
     "detail-type" : ["RDS DB Instance Event"],
     "detail" : {
       "SourceIdentifier" : [each.value.db_identifier],
-      "EventCategories"  : ["failure", "failover"]
+      "EventCategories" : ["failure", "failover"]
     }
   })
 

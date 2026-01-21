@@ -5,17 +5,17 @@ variable "resource_name_prefix" {
 variable "instances" {
   description = "Map of RDS instances to alarm on"
   type = map(object({
-    db_identifier        = string
-    instance_name        = string
-    conn_warn_threshold  = optional(number) # e.g. 550
-    conn_crit_threshold  = optional(number) # e.g. 620
+    db_identifier       = string
+    instance_name       = string
+    conn_warn_threshold = optional(number) # e.g. 550
+    conn_crit_threshold = optional(number) # e.g. 620
   }))
 }
 
 
 variable "sns_topics" {
   type = object({
-    storage    = string
+    storage = string
 
     #anchor extra
     cpu        = string

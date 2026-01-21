@@ -40,9 +40,30 @@ data "aws_iam_policy_document" "policy" {
   }
 
   statement {
-    effect = "Allow"
-    actions = ["sns:Publish"]
+    effect    = "Allow"
+    actions   = ["sns:Publish"]
     resources = values(var.topic_map)
+  }
+  # ✅ required for publishing to SSE-KMS encrypted SNS topics
+  statement {
+    effect = "Allow"
+    actions = [
+      "kms:GenerateDataKey*",
+      "kms:Decrypt",
+    ]
+    resources = [var.sns_kms_key_arn]
+
+    # Optional: tighten usage to SNS in this region/account
+    condition {
+      test     = "StringEquals"
+      variable = "kms:ViaService"
+      values = ["sns.${var.region}.amazonaws.com"]
+    }
+    condition {
+      test     = "StringEquals"
+      variable = "kms:CallerAccount"
+      values   = [var.current_account_id]
+    }
   }
 }
 
@@ -65,10 +86,10 @@ resource "aws_lambda_function" "this" {
   environment {
     variables = merge(
       {
-        SNS_TOPIC_MAP            = jsonencode(var.topic_map)
-        AWSBACKUP_STATE_TOPIC_MAPPING      = jsonencode(var.awsbackup_state_topic_mapping)
-        EC2_STATE_TOPIC_LABEL    = var.ec2_state_topic_label
-        EC2_STATE_TOPIC_MAPPING  = jsonencode(var.ec2_state_topic_mapping)
+        SNS_TOPIC_MAP                 = jsonencode(var.topic_map)
+        AWSBACKUP_STATE_TOPIC_MAPPING = jsonencode(var.awsbackup_state_topic_mapping)
+        EC2_STATE_TOPIC_LABEL         = var.ec2_state_topic_label
+        EC2_STATE_TOPIC_MAPPING       = jsonencode(var.ec2_state_topic_mapping)
       },
       var.project_id != null ? { PROJECT_ID = var.project_id } : {},
       var.environment != null ? { ENVIRONMENT = var.environment } : {},

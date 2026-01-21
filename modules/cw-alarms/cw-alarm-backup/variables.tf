@@ -6,8 +6,8 @@ variable "resource_name_prefix" {
 variable "vaults" {
   description = "Backup vaults to alarm on"
   type = map(object({
-    vault_name    = string
-    display_name  = optional(string)
+    vault_name   = string
+    display_name = optional(string)
   }))
 }
 

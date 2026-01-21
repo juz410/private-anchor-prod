@@ -451,3 +451,14 @@ resource "aws_network_acl_rule" "egress_600" {
   rule_action    = "allow"
   cidr_block     = "192.168.0.0/16"
 }
+
+resource "aws_network_acl_rule" "egress_sftp_22_107" {
+  network_acl_id = aws_network_acl.main_nacl.id
+  rule_number    = 107
+  egress         = true
+  protocol       = "tcp"
+  rule_action    = "allow"
+  cidr_block     = "0.0.0.0/0" 
+  from_port      = 22
+  to_port        = 22
+}

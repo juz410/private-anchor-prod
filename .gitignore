@@ -52,3 +52,4 @@ tfplan
 !/cw-alarms-bash-scripts/**/*.sh
 .DS_Store
 *.zip
+/dashboard

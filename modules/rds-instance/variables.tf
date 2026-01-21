@@ -99,6 +99,11 @@ variable "db_skip_final_snapshot" {
 variable "db_final_snapshot_identifier" {
   type = string
 }
+
+variable "db_parameter_group_name" {
+  type = string
+  default = null
+}
 #tag
 
 variable "tags" {

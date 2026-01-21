@@ -40,8 +40,13 @@ variable "evaluation_periods" {
   default = 1
 }
 
+variable "datapoints_to_alarm" {
+  type = number
+  default = 1
+}
+
 variable "treat_missing_data" {
-  type    = string
+  type = string
   # For reset counts, 'notBreaching' is usually nicer than 'missing'
   default = "notBreaching"
 }

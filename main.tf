@@ -174,6 +174,7 @@ module "ec2_instances" {
   subnet_id            = each.value.subnet_id
   security_group_ids   = each.value.security_group_ids
   iam_instance_profile = module.iam.ec2_instance_profile_name
+  # iam_instance_profile = each.value.iam_instance_profile
 
   # Root volume
   root_volume_size           = try(each.value.root_volume_size, 30)
@@ -289,6 +290,8 @@ module "multibyte_db_subnet_group" {
   )
 }
 
+
+
 module "multibyte_db_rds_postgresql" {
   source = "./modules/rds-instance"
 
@@ -298,7 +301,7 @@ module "multibyte_db_rds_postgresql" {
 
   # ---- Engine ----
   db_engine         = "postgres"
-  db_engine_version = data.aws_rds_engine_version.postgres_latest.version
+  db_engine_version = 15.15
 
   # ---- Instance Sizing ----
   db_instance_class     = "db.m7i.xlarge"
@@ -323,14 +326,15 @@ module "multibyte_db_rds_postgresql" {
   # ---- Backup & Protection ----
   db_backup_retention_period    = null # AWS Backup manages retention
   db_copy_tags_to_snapshot      = false
-  db_deletion_protection        = true
+  db_deletion_protection        = false
   db_auto_minor_version_upgrade = true
 
   # ---- Apply & Maintenance ----
-  db_apply_immediately               = false
+  db_apply_immediately               = true
   db_skip_final_snapshot             = true
-  db_final_snapshot_identifier       = "${local.resource_name_prefix}-eastel-bss-db-final-snapshot"
+  db_final_snapshot_identifier       = "${local.resource_name_prefix}-eastel-bss-db-final-snapshot-postgresql15"
   db_enabled_cloudwatch_logs_exports = ["iam-db-auth-error", "postgresql", "upgrade"]
+  db_parameter_group_name = data.aws_db_parameter_group.multibyte_db_rds_postgresql15_parameter_group.name
   # You can set skip_final_snapshot = true in non-prod
 
 
@@ -449,23 +453,35 @@ module "sns_monitoring" {
     cpu = {
       name          = "gap-cpu-topic"
       display_name  = "${local.resource_name_prefix}-cpu-alarm"
-      subscriptions = []
+      subscriptions = [{
+      protocol = "email"
+      endpoint = "noc@eastel.com.my"
+    }]
     }
     memory = {
       name          = "gap-memory-topic"
       display_name  = "${local.resource_name_prefix}-memory-alarm"
-      subscriptions = []
+      subscriptions = [{
+      protocol = "email"
+      endpoint = "noc@eastel.com.my"
+    }]
     }
 
     disk = {
       name          = "gap-disk-topic"
       display_name  = "${local.resource_name_prefix}-low-disk-alarm"
-      subscriptions = []
+      subscriptions = [{
+      protocol = "email"
+      endpoint = "noc@eastel.com.my"
+    }]
     }
     statuscheck = {
       name          = "gap-status-check-topic"
       display_name  = "${local.resource_name_prefix}-status-check-alarm"
-      subscriptions = []
+      subscriptions = [{
+      protocol = "email"
+      endpoint = "noc@eastel.com.my"
+    }]
     }
 
     #ec2_instance Anchor extra
@@ -474,7 +490,7 @@ module "sns_monitoring" {
       display_name  = "${local.resource_name_prefix}-instancestate-alarm"
       subscriptions = [{
       protocol = "email"
-      endpoint = "kokfeeng.tan@g-asiapac.com"
+      endpoint = "noc@eastel.com.my"
     }]
     }
 
@@ -482,24 +498,36 @@ module "sns_monitoring" {
     rds_storage = {
       name          = "gap-rds-storage-topic"
       display_name  = "${local.resource_name_prefix}-rds-storage-alarm"
-      subscriptions = []
+      subscriptions = [{
+      protocol = "email"
+      endpoint = "noc@eastel.com.my"
+    }]
     }
 
     # --- RDS extra ---
     rds_cpu = {
       name          = "gap-rds-cpu-topic"
       display_name  = "${local.resource_name_prefix}-rds-cpu-alarm"
-      subscriptions = []
+      subscriptions = [{
+      protocol = "email"
+      endpoint = "noc@eastel.com.my"
+    }]
     }
     rds_connection = {
       name          = "gap-rds-connection-topic"
       display_name  = "${local.resource_name_prefix}-rds-connection-alarm"
-      subscriptions = []
+      subscriptions = [{
+      protocol = "email"
+      endpoint = "noc@eastel.com.my"
+    }]
     }
     rds_event = {
       name          = "gap-rds-event-topic"
       display_name  = "${local.resource_name_prefix}-rds-event-alarm"
-      subscriptions = []
+      subscriptions = [{
+      protocol = "email"
+      endpoint = "noc@eastel.com.my"
+    }]
     }
 
     #ECS
@@ -508,28 +536,40 @@ module "sns_monitoring" {
       # from sheet: GAP_RunningTaskCount_topic
       name          = "gap-runningtaskcount-topic"
       display_name  = "${local.resource_name_prefix}-running-task-count-alarm"
-      subscriptions = []
+      subscriptions = [{
+      protocol = "email"
+      endpoint = "noc@eastel.com.my"
+    }]
     }
 
     ecs_pending_task = {
       # GAP_PendingTaskCount_topic
       name          = "gap-pendingtaskcount-topic"
       display_name  = "${local.resource_name_prefix}-pending-task-count-alarm"
-      subscriptions = []
+      subscriptions = [{
+      protocol = "email"
+      endpoint = "noc@eastel.com.my"
+    }]
     }
 
     ecs_service_cpu = {
       # GAP_ServiceCPUUtilization_topic
       name          = "gap-servicecpuutilization-topic"
       display_name  = "${local.resource_name_prefix}-service-cpu-utilization-alarm"
-      subscriptions = []
+      subscriptions = [{
+      protocol = "email"
+      endpoint = "noc@eastel.com.my"
+    }]
     }
 
     ecs_service_memory = {
       # GAP_ServiceMemoryUtilization_Topic
       name          = "gap-servicememoryutilization-topic"
       display_name  = "${local.resource_name_prefix}-service-memory-utilization-alarm"
-      subscriptions = []
+      subscriptions = [{
+      protocol = "email"
+      endpoint = "noc@eastel.com.my"
+    }]
     }
     
 
@@ -539,49 +579,74 @@ module "sns_monitoring" {
       display_name  = "${local.resource_name_prefix}-backup-success"
       subscriptions = [{
       protocol = "email"
+      endpoint = "noc@eastel.com.my"
+    },{
+      protocol = "email"
       endpoint = "kokfeeng.tan@g-asiapac.com"
-    }]
+    }
+    ]
     }
     backup_failed = {
       name          = "gap-backup-failed-topic"
       display_name  = "${local.resource_name_prefix}-backup-failed"
-      subscriptions = []
+      subscriptions = [{
+      protocol = "email"
+      endpoint = "noc@eastel.com.my"
+    }]
     }
     backup_expired = {
       name          = "gap-backup-expired-topic"
       display_name  = "${local.resource_name_prefix}-backup-expired"
-      subscriptions = []
+      subscriptions = [{
+      protocol = "email"
+      endpoint = "noc@eastel.com.my"
+    }]
     }
 
     # NLB extra alarms
     nlb_tcp_client_reset = {
       name          = "gap-nlb-tcptargetresetcount-topic"
       display_name  = "${local.resource_name_prefix}-tcp-target-reset-count-alarm"
-      subscriptions = []
+      subscriptions = [{
+      protocol = "email"
+      endpoint = "noc@eastel.com.my"
+    }]
     }
     nlb_tcp_elb_reset = {
       name          = "gap-nlb-tcpelbresetcount-topic"
       display_name  = "${local.resource_name_prefix}-tcp-elb-reset-count-alarm"
-      subscriptions = []
+      subscriptions = [{
+      protocol = "email"
+      endpoint = "noc@eastel.com.my"
+    }]
     }
 
     #ALB extra alarms
     alb_healthyhost = {
       name          = "gap-alb-healthyhostcount-topic"
       display_name  = "${local.resource_name_prefix}-healthy-host-count-alarm"
-      subscriptions = [] # or add email subscriptions like your other topics
+      subscriptions = [{
+      protocol = "email"
+      endpoint = "noc@eastel.com.my"
+    }] # or add email subscriptions like your other topics
     }
 
     alb_target_5xx = {
       name          = "gap-alb-httpcode-target-5xx-topic"
       display_name  = "${local.resource_name_prefix}-HTTPCodeTarget5XXCount-alarm"
-      subscriptions = []
+      subscriptions = [{
+      protocol = "email"
+      endpoint = "noc@eastel.com.my"
+    }]
     }
 
     alb_elb_5xx = {
       name          = "gap-alb-httpcode-elb-5xx-topic"
       display_name  = "${local.resource_name_prefix}-HTTPCodeELB5XXCount-alarm"
-      subscriptions = []
+      subscriptions = [{
+      protocol = "email"
+      endpoint = "noc@eastel.com.my"
+    }]
     }
   }
 }
@@ -679,7 +744,10 @@ module "sns_publisher_shared" {
     FAILED    = "failed"
     EXPIRED   = "expired"
   }
-
+  sns_kms_key_arn = data.aws_kms_key.sns_cmk.arn
+  current_account_id    = data.aws_caller_identity.current.account_id
+  region = var.region
+ 
   ec2_state_topic_label   = "ec2_state"
   ec2_state_topic_mapping = {
     pending        = "ec2_state"
@@ -847,10 +915,11 @@ module "nlb_alarms" {
   }
 
   # Optional overrides 
-  tcp_client_reset_threshold = 20
+  tcp_client_reset_threshold = 50
   tcp_elb_reset_threshold    = 20
   period_seconds             = 300
-  evaluation_periods         = 1
+  evaluation_periods         = 4
+  datapoints_to_alarm = 4
 
   tags = local.standard_tags
 }

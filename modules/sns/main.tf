@@ -1,7 +1,7 @@
 resource "aws_sns_topic" "this" {
-  for_each     = var.topics
-  name         = each.value.name
-  display_name = try(each.value.display_name, null)
+  for_each          = var.topics
+  name              = each.value.name
+  display_name      = try(each.value.display_name, null)
   kms_master_key_id = length(var.kms_key_arn) > 0 ? var.kms_key_arn : null
 
 

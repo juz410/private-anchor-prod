@@ -41,6 +41,7 @@ resource "aws_db_instance" "rds" {
   copy_tags_to_snapshot      = var.db_copy_tags_to_snapshot
   deletion_protection        = var.db_deletion_protection
   auto_minor_version_upgrade = var.db_auto_minor_version_upgrade
+  parameter_group_name = var.db_parameter_group_name
 
   # Encryption
   storage_encrypted = true

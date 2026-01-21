@@ -717,24 +717,31 @@ module "iot_web_frontend_server_sg" {
       source_security_group_id = "sg-0247a03b9b047bddc"
     },
     {
-      from_port                = 8443
-      to_port                  = 8443
-      protocol                 = "tcp"
-      description              = "Allow HTTPS 8443 from eastel jumphost"
-      source_security_group_id = "sg-0247a03b9b047bddc"
-    },
-    {
-      from_port                = 9993
-      to_port                  = 9993
-      protocol                 = "tcp"
-      description              = "Allow HTTPS 9993 from eastel jumphost"
-      source_security_group_id = "sg-0247a03b9b047bddc"
-    },
-    {
       from_port                = 8080
       to_port                  = 8080
       protocol                 = "tcp"
       description              = "Allow 8080 HTTP from multibyte jumphost"
+      source_security_group_id = "sg-02f00e396c23d46e4"
+    },
+    {
+      from_port                = 443
+      to_port                  = 443
+      protocol                 = "tcp"
+      description              = "Allow HTTPS 443 from internal ALB"
+      source_security_group_id = module.internal_alb_sg.security_group_id
+    },
+    {
+      from_port                = 443
+      to_port                  = 443
+      protocol                 = "tcp"
+      description              = "Allow HTTPS 443 from eastel jumphost"
+      source_security_group_id = "sg-0247a03b9b047bddc"
+    },
+    {
+      from_port                = 443
+      to_port                  = 443
+      protocol                 = "tcp"
+      description              = "Allow 443 HTTPS from multibyte jumphost"
       source_security_group_id = "sg-02f00e396c23d46e4"
     },
     # {
@@ -813,20 +820,6 @@ module "iot_web_backend_server_sg" {
       source_security_group_id = module.iot_web_backend_server_sg.security_group_id
     },
     {
-      from_port                = 8443
-      to_port                  = 8443
-      protocol                 = "tcp"
-      description              = "Allow HTTPS 8443 from iot frontend"
-      source_security_group_id = module.iot_web_frontend_server_sg.security_group_id
-    },
-    {
-      from_port                = 9993
-      to_port                  = 9993
-      protocol                 = "tcp"
-      description              = "Allow HTTPS 9993 from iot frontend"
-      source_security_group_id = module.iot_web_frontend_server_sg.security_group_id
-    },
-    {
       from_port                = 8080
       to_port                  = 8080
       protocol                 = "tcp"
@@ -839,6 +832,34 @@ module "iot_web_backend_server_sg" {
       protocol                 = "tcp"
       description              = "Allow 8080 HTTP from eastel jumphost"
       source_security_group_id = "sg-0247a03b9b047bddc"
+    },
+    {
+      from_port                = 8080
+      to_port                  = 8080
+      protocol                 = "tcp"
+      description              = "Allow HTTPS 8080 from iot frontend"
+      source_security_group_id = module.iot_web_frontend_server_sg.security_group_id
+    },
+    {
+      from_port                = 6379
+      to_port                  = 6379
+      protocol                 = "tcp"
+      description              = "Allow HTTPS 6379 from iot frontend"
+      source_security_group_id = module.iot_web_frontend_server_sg.security_group_id
+    },
+    {
+      from_port                = 9990
+      to_port                  = 9990
+      protocol                 = "tcp"
+      description              = "Allow HTTPS 9990 from iot frontend"
+      source_security_group_id = module.iot_web_frontend_server_sg.security_group_id
+    },
+    {
+      from_port                = 8084
+      to_port                  = 8084
+      protocol                 = "tcp"
+      description              = "Allow HTTPS 8084 from iot frontend"
+      source_security_group_id = module.iot_web_frontend_server_sg.security_group_id
     },
 
 
@@ -964,6 +985,20 @@ module "middleware_api_server_sg" {
       protocol                 = "tcp"
       description              = "Allow 8080 HTTP from eastel jumphost"
       source_security_group_id = "sg-0247a03b9b047bddc"
+    },
+    {
+      from_port                = 8080
+      to_port                  = 8080
+      protocol                 = "tcp"
+      description              = "Allow HTTPS 8080 from iot frontend"
+      source_security_group_id = module.iot_web_frontend_server_sg.security_group_id
+    },
+    {
+      from_port                = 8080
+      to_port                  = 8080
+      protocol                 = "tcp"
+      description              = "Allow HTTPS 8080 from iot backend"
+      source_security_group_id = module.iot_web_backend_server_sg.security_group_id
     },
   ]
 

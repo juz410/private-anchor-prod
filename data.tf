@@ -35,6 +35,11 @@ data "aws_s3_bucket" "lb_access_logs_bucket" {
   bucket = "anchor-lb-logs-ap-southeast-5-328425459315"
 }
 
+data "aws_db_parameter_group" "multibyte_db_rds_postgresql15_parameter_group" {
+  name = "anchor-prod-eastel-bss-db-postgresql15-parameter-group"
+}
+
+
 data "aws_caller_identity" "current" {}
 data "aws_key_pair" "instances_key_pair" {
   key_name           = "anchor-prod-keypair-001"

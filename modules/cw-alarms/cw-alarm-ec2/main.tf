@@ -82,18 +82,18 @@ locals {
   disk_gb_map = { for x in local.disk_gb_defs : x.key => x }
 
 
-# # anchor extra
-#   # ---------- Instance state-change events (EventBridge -> SNS) ----------
-#   inst_state_defs = [
-#     for inst_key, inst in var.instances : {
-#       key         = "${inst_key}_statechange"
-#       rule_name   = substr("${var.resource_name_prefix}-${inst.instance_name}-instancestate-change", 0, 64)
-#       description = "EC2 instance state change for ${inst.instance_name} (${inst.instance_id})"
-#       instance_id = inst.instance_id
-#       topic_arn   = var.sns_topics.instance_state
-#     }
-#   ]
-#   inst_state_map = { for d in local.inst_state_defs : d.key => d }
+  # # anchor extra
+  #   # ---------- Instance state-change events (EventBridge -> SNS) ----------
+  #   inst_state_defs = [
+  #     for inst_key, inst in var.instances : {
+  #       key         = "${inst_key}_statechange"
+  #       rule_name   = substr("${var.resource_name_prefix}-${inst.instance_name}-instancestate-change", 0, 64)
+  #       description = "EC2 instance state change for ${inst.instance_name} (${inst.instance_id})"
+  #       instance_id = inst.instance_id
+  #       topic_arn   = var.sns_topics.instance_state
+  #     }
+  #   ]
+  #   inst_state_map = { for d in local.inst_state_defs : d.key => d }
 }
 
 resource "aws_cloudwatch_metric_alarm" "cpu" {

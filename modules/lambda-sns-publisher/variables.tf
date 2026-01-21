@@ -63,24 +63,34 @@ variable "ec2_state_topic_mapping" {
 }
 
 variable "lambda_runtime" {
-  type        = string
-  default     = "python3.11"
+  type    = string
+  default = "python3.11"
 }
 
 variable "lambda_memory_mb" {
-  type        = number
-  default     = 256
+  type    = number
+  default = 256
 }
 
 variable "lambda_timeout_seconds" {
-  type        = number
-  default     = 30
+  type    = number
+  default = 30
 }
 
 variable "lambda_additional_env" {
   description = "Extra environment variables for the publisher Lambda"
   type        = map(string)
   default     = {}
+}
+
+variable "sns_kms_key_arn" {
+  type = string
+  default = ""
+}
+
+variable "current_account_id" {
+  type = string
+  default = ""
 }
 
 variable "tags" {
@@ -94,4 +104,9 @@ variable "project_id" {
 
 variable "environment" {
   type = string
+}
+
+variable "region" {
+  type = string
+  default = ""
 }

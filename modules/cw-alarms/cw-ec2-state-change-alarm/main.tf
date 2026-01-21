@@ -19,9 +19,9 @@ resource "aws_cloudwatch_event_rule" "ec2_state_change" {
   description    = "EC2 instance state change notifications"
   event_bus_name = local.event_bus_name
   event_pattern = jsonencode({
-    "source"      : ["aws.ec2"],
+    "source" : ["aws.ec2"],
     "detail-type" : ["EC2 Instance State-change Notification"],
-    "detail"      : local.event_detail_filter
+    "detail" : local.event_detail_filter
   })
 
   tags = var.tags

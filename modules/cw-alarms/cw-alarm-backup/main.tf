@@ -4,14 +4,14 @@ locals {
 }
 
 resource "aws_cloudwatch_event_rule" "success" {
-  name          = substr("${var.resource_name_prefix}-backup-success", 0, 64)
-  description   = "Backup job completed for configured vaults"
+  name        = substr("${var.resource_name_prefix}-backup-success", 0, 64)
+  description = "Backup job completed for configured vaults"
   event_pattern = jsonencode({
-    "source"      : ["aws.backup"],
+    "source" : ["aws.backup"],
     "detail-type" : ["Backup Job State Change"],
-    "detail"      : {
+    "detail" : {
       "backupVaultName" : local.vault_names,
-      "state"           : ["COMPLETED"]
+      "state" : ["COMPLETED"]
     }
   })
   event_bus_name = local.event_bus_name
@@ -19,14 +19,14 @@ resource "aws_cloudwatch_event_rule" "success" {
 }
 
 resource "aws_cloudwatch_event_rule" "failed" {
-  name          = substr("${var.resource_name_prefix}-backup-failed", 0, 64)
-  description   = "Backup job failed for configured vaults"
+  name        = substr("${var.resource_name_prefix}-backup-failed", 0, 64)
+  description = "Backup job failed for configured vaults"
   event_pattern = jsonencode({
-    "source"      : ["aws.backup"],
+    "source" : ["aws.backup"],
     "detail-type" : ["Backup Job State Change"],
-    "detail"      : {
+    "detail" : {
       "backupVaultName" : local.vault_names,
-      "state"           : ["FAILED"]
+      "state" : ["FAILED"]
     }
   })
   event_bus_name = local.event_bus_name
@@ -34,14 +34,14 @@ resource "aws_cloudwatch_event_rule" "failed" {
 }
 
 resource "aws_cloudwatch_event_rule" "expired" {
-  name          = substr("${var.resource_name_prefix}-backup-expired", 0, 64)
-  description   = "Backup job expired for configured vaults"
+  name        = substr("${var.resource_name_prefix}-backup-expired", 0, 64)
+  description = "Backup job expired for configured vaults"
   event_pattern = jsonencode({
-    "source"      : ["aws.backup"],
+    "source" : ["aws.backup"],
     "detail-type" : ["Backup Job State Change"],
-    "detail"      : {
+    "detail" : {
       "backupVaultName" : local.vault_names,
-      "state"           : ["EXPIRED"]
+      "state" : ["EXPIRED"]
     }
   })
   event_bus_name = local.event_bus_name

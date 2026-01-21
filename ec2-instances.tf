@@ -115,6 +115,7 @@ locals {
       backup_yearly           = false
       key_name                = "${data.aws_key_pair.instances_key_pair.key_name}"
       disable_api_termination = true
+      
 
 
       user_data = "${local.base_userdata}\n${local.ebs_userdata}"

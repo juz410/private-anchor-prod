@@ -2,7 +2,7 @@ locals {
   # ---------- HealthyHostCount ----------
   healthy_defs = [
     for key, lb in var.load_balancers : {
-      key        = "${key}_healthy"
+      key = "${key}_healthy"
       # add "-alb-" so it's obvious this is an ALB alarm
       alarm_name = "${var.resource_name_prefix}-${lb.name}-alb-unhealthyhost-high-5min"
       topic_arn  = var.sns_topics.healthy_host

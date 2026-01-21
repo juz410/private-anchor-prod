@@ -40,7 +40,7 @@ resource "aws_iam_instance_profile" "ec2_instance_profile" {
 #aws backup alarm
 resource "aws_sns_topic_policy" "event_bridge_to_sns_policy" {
   for_each = var.event_bridge_sns_topic_arns
-  
+
   arn = each.value
 
   policy = jsonencode({
@@ -53,7 +53,7 @@ resource "aws_sns_topic_policy" "event_bridge_to_sns_policy" {
           Service = "events.amazonaws.com"
         }
         Action   = "sns:Publish"
-        Resource = each.value  # <-- single resource per policy (no list)
+        Resource = each.value # <-- single resource per policy (no list)
       }
     ]
   })

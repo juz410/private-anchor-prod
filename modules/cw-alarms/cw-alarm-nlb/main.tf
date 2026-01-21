@@ -50,6 +50,7 @@ resource "aws_cloudwatch_metric_alarm" "tcp_client_reset" {
   comparison_operator = "GreaterThanThreshold"
   unit                = "Count"
   treat_missing_data  = var.treat_missing_data
+  datapoints_to_alarm = var.datapoints_to_alarm
 
   dimensions    = each.value.dimensions
   alarm_actions = [each.value.topic_arn]
@@ -73,6 +74,8 @@ resource "aws_cloudwatch_metric_alarm" "tcp_elb_reset" {
   comparison_operator = "GreaterThanThreshold"
   unit                = "Count"
   treat_missing_data  = var.treat_missing_data
+  datapoints_to_alarm = var.datapoints_to_alarm
+
 
   dimensions    = each.value.dimensions
   alarm_actions = [each.value.topic_arn]
