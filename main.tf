@@ -326,7 +326,7 @@ module "multibyte_db_rds_postgresql" {
   # ---- Backup & Protection ----
   db_backup_retention_period    = null # AWS Backup manages retention
   db_copy_tags_to_snapshot      = false
-  db_deletion_protection        = false
+  db_deletion_protection        = true
   db_auto_minor_version_upgrade = true
 
   # ---- Apply & Maintenance ----
